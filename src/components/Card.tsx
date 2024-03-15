@@ -1,3 +1,4 @@
+import Draggable from 'react-draggable';
 import { Box } from '@mui/material';
 import { deepPurple } from '@mui/material/colors';
 import { styled } from '@mui/system';
@@ -11,10 +12,13 @@ const CardStyles = styled(Box)(() => ({
 
 export const Card = ({ children, ...props }) => {
   return (
-    <Box display={'flex'}>
-      <CardStyles {...props}>
-        <Box>{children}</Box>
-      </CardStyles>
-    </Box>
+    <Draggable handle="strong">
+      <Box style={{ display: 'inline-block' }}>
+        <CardStyles {...props}>
+          <Box>{children}</Box>
+        </CardStyles>
+        <strong>0</strong>
+      </Box>
+    </Draggable>
   );
 };
