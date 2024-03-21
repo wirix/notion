@@ -3,7 +3,7 @@ import { PanelTodoList } from './PanelTodoList';
 
 export const Panels = () => {
   return (
-    <Box>
+    <Box sx={{ position: 'relative' }}>
       <PanelTodoList />
     </Box>
   );

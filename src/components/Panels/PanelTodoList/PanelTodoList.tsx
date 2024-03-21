@@ -1,5 +1,5 @@
 import { StatusTodoEnum, useTodoStore } from '../../../store';
-import { Card, EditableText } from '../..';
+import { DraggableCard, EditableText } from '../..';
 import { Box, Button, Checkbox, Grid } from '@mui/material';
 import { v4 as uuidv4 } from 'uuid';
 import { blueGrey, red } from '@mui/material/colors';
@@ -8,10 +8,7 @@ import { useState } from 'react';
 import { PickerCalendar, StatusOption } from '.';
 
 export const PanelTodoList = () => {
-  const todos = useTodoStore((store) => store.todos);
-  const updateTodo = useTodoStore((store) => store.updateTodo);
-  const addTodo = useTodoStore((store) => store.addTodo);
-  const deleteTodo = useTodoStore((store) => store.deleteTodo);
+  const { todos, updateTodo, addTodo, deleteTodo } = useTodoStore();
 
   const [choiceIds, setChoiceIds] = useState<string[]>([]);
 
@@ -32,7 +29,7 @@ export const PanelTodoList = () => {
   };
 
   return (
-    <Card sx={{ display: 'flex', position: 'relative', backgroundColor: '#fff' }}>
+    <DraggableCard sx={{ display: 'flex', position: 'relative', backgroundColor: '#fff' }}>
       <Box display={'flex'} justifyContent={'space-between'} marginBottom={2}>
         <Checkbox
           disabled={todos.length === 0}
@@ -101,6 +98,6 @@ export const PanelTodoList = () => {
           </Box>
         </Grid>
       </Grid>
-    </Card>
+    </DraggableCard>
   );
 };
