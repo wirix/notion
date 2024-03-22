@@ -3,12 +3,8 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
 export interface CardCoords {
-  nextX: number;
-  nextY: number;
-  startX: number;
-  startY: number;
-  lastX: number;
-  lastY: number;
+  dx: number;
+  dy: number;
 }
 
 export interface CardSize {
@@ -32,7 +28,7 @@ export const useCard = create<State & Actions>()(
   persist(
     immer((set) => ({
       card: {
-        coords: { nextX: 0, nextY: 0, startX: 0, startY: 0, lastX: 0, lastY: 0 },
+        coords: { dx: 0, dy: 0 },
       },
       changeCoords: (coords: CardCoords) => {
         set((state) => {
@@ -40,6 +36,6 @@ export const useCard = create<State & Actions>()(
         });
       },
     })),
-    { name: 'card-storage', storage: createJSONStorage(() => sessionStorage) },
+    { name: 'panels-coords-storage', storage: createJSONStorage(() => sessionStorage) },
   ),
 );
