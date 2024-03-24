@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { useState } from 'react';
-import { useCard } from '../../../store';
+import { usePanelCoordsStore } from '../../../store';
 import { useDebounce } from '../../../hooks';
 import { DRAG_INDICATOR } from '../constants';
+import { PanelsEnum } from '../../../store/panels-store';
 
-export const useDraggable = () => {
-  const { changeCoords } = useCard();
-  const { coords } = useCard((store) => store.card);
-
+export const useDraggable = (panel: PanelsEnum) => {
+  const { changeCoords } = usePanelCoordsStore(panel)();
+  const { coords } = usePanelCoordsStore(panel)((store) => store.panel);
   const [node, setNode] = useState<HTMLElement | null>(null);
   const [{ dx, dy }, setOffset] = useState({
     ...coords,
@@ -17,10 +17,10 @@ export const useDraggable = () => {
   const ref = useCallback((nodeEle) => {
     setNode(nodeEle);
   }, []);
-
+  console.log(node, panel);
   const handleMouseDown = useCallback(
     (e: MouseEvent) => {
-      if (!document.getElementById(DRAG_INDICATOR)?.contains(e.target as Node)) {
+      if (!document.getElementById(`${DRAG_INDICATOR}-${panel}`)?.contains(e.target as Node)) {
         return;
       }
       isDragging.current = true;
@@ -79,7 +79,7 @@ export const useDraggable = () => {
       node.style.transform = `translate3d(${dx}px, ${dy}px, 0)`;
       node.style.zIndex = isDragging.current ? `50` : `1`;
     }
-  }, [node, dx, dy, isDragging.current]);
+  }, [node, dx, dy]);
 
   useEffect(() => {
     if (!node) {

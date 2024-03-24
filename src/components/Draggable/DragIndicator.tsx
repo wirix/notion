@@ -1,10 +1,10 @@
 import { DRAG_INDICATOR } from './constants';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 
-export const DragIndicator = ({ ...props }) => {
+export const DragIndicator = ({ panel, ...props }) => {
   return (
     <DragIndicatorIcon
-      id={DRAG_INDICATOR}
+      id={`${DRAG_INDICATOR}-${panel}`}
       style={{
         fontSize: '24px',
         cursor: 'grab',

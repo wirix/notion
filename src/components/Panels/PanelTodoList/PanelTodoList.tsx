@@ -6,6 +6,7 @@ import { blueGrey, red } from '@mui/material/colors';
 import RestoreFromTrashIcon from '@mui/icons-material/RestoreFromTrash';
 import { useState } from 'react';
 import { PickerCalendar, StatusOption } from '.';
+import { PanelsEnum } from '../../../store/panels-store';
 
 export const PanelTodoList = () => {
   const { todos, updateTodo, addTodo, deleteTodo } = useTodoStore();
@@ -29,7 +30,9 @@ export const PanelTodoList = () => {
   };
 
   return (
-    <DraggableCard sx={{ display: 'flex', position: 'relative', backgroundColor: '#fff' }}>
+    <DraggableCard
+      panel={PanelsEnum.TODO}
+      style={{ display: 'flex', position: 'relative', backgroundColor: '#fff' }}>
       <Box display={'flex'} justifyContent={'space-between'} marginBottom={2}>
         <Checkbox
           disabled={todos.length === 0}
