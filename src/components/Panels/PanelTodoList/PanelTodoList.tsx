@@ -1,11 +1,10 @@
 import { StatusTodoEnum, useTodoStore } from '../../../store';
-import { DraggableCard, EditableText } from '../..';
+import { EditableText } from '../..';
 import { Box, Button, Checkbox, Grid } from '@mui/material';
 import { blueGrey, red } from '@mui/material/colors';
 import RestoreFromTrashIcon from '@mui/icons-material/RestoreFromTrash';
-import { useCallback, useState } from 'react';
+import { Fragment, useCallback, useState } from 'react';
 import { PickerCalendar, StatusOption } from '.';
-import { PanelsEnum } from '../../../store/panels-store';
 
 export const PanelTodoList = () => {
   const { todos, updateTodo, addTodo, deleteTodo } = useTodoStore();
@@ -28,14 +27,12 @@ export const PanelTodoList = () => {
     setChoiceIds([]);
   };
 
-  const handleUpdateTextTodo = useCallback((id, field) => {
-    updateTodo(id, { ...field });
+  const handleUpdateText = useCallback((id: string, text: string) => {
+    updateTodo(id, { text });
   }, []);
 
   return (
-    <DraggableCard
-      panel={PanelsEnum.TODO}
-      style={{ display: 'flex', position: 'relative', backgroundColor: '#fff' }}>
+    <Fragment>
       <Box display={'flex'} justifyContent={'space-between'} marginBottom={2}>
         <Checkbox
           disabled={todos.length === 0}
@@ -84,7 +81,7 @@ export const PanelTodoList = () => {
                   }}
                 />
                 <Box minWidth={180} flexGrow={1} p={0} px={1}>
-                  <EditableText id={todo.id} updateText={handleUpdateTextTodo}>
+                  <EditableText id={todo.id} updateText={handleUpdateText}>
                     {todo.text}
                   </EditableText>
                 </Box>
@@ -104,6 +101,6 @@ export const PanelTodoList = () => {
           </Box>
         </Grid>
       </Grid>
-    </DraggableCard>
+    </Fragment>
   );
 };

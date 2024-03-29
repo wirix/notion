@@ -1,0 +1,35 @@
+import { create } from 'zustand';
+import { createJSONStorage, persist } from 'zustand/middleware';
+import { immer } from 'zustand/middleware/immer';
+import { PanelsEnum } from './panels-store';
+
+export interface Size {
+  width: number;
+  height: number;
+}
+
+type State = {
+  size: Size;
+};
+
+type Actions = {
+  changeSize: (size: Size) => void;
+};
+
+export const useSizeStore = (panel: PanelsEnum) =>
+  create<State & Actions>()(
+    persist(
+      immer((set) => ({
+        size: {
+          width: 500,
+          height: 300,
+        },
+        changeSize: (size: Size) => {
+          set((store) => {
+            store.size = size;
+          });
+        },
+      })),
+      { name: `${panel}-panel-size-storage`, storage: createJSONStorage(() => sessionStorage) },
+    ),
+  );

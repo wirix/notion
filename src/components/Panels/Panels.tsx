@@ -1,8 +1,10 @@
 import { Box } from '@mui/material';
 import { PanelTodoList } from './PanelTodoList';
-import { Fragment } from 'react';
 import { PanelRoutine } from './PanelRoutine';
 import { PanelsEnum, usePanelsStore } from '../../store/panels-store';
+import { Card, Draggable } from '..';
+import { ResizeTag } from '../ResizeTag';
+import { Fragment } from 'react';
 
 const panels = [
   {
@@ -24,7 +26,24 @@ export const Panels = () => {
         .filter((panel) => selectedPanels.includes(panel.type))
         .map((panel, index) => {
           const { Component, type } = panel;
-          return <Fragment key={`${type}-${index}`}>{Component}</Fragment>;
+          return (
+            <Fragment key={`${type}-${index}`}>
+              <Draggable panel={type}>
+                <ResizeTag panel={type}>
+                  <Card
+                    panel={type}
+                    style={{
+                      display: 'flex',
+                      position: 'relative',
+                      backgroundColor: '#fff',
+                      resize: 'both',
+                    }}>
+                    {Component}
+                  </Card>
+                </ResizeTag>
+              </Draggable>
+            </Fragment>
+          );
         })}
     </Box>
   );

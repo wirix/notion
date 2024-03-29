@@ -1,6 +1,4 @@
 import { useCallback } from 'react';
-import { DraggableCard } from '../..';
-import { PanelsEnum } from '../../../store/panels-store';
 import { TableRoutine } from './TableRoutine';
 import { useRoutineStore, Day } from '../../../store';
 
@@ -20,15 +18,11 @@ export const PanelRoutine = () => {
   }, []);
 
   return (
-    <DraggableCard
-      style={{ display: 'flex', position: 'relative', backgroundColor: '#fff' }}
-      panel={PanelsEnum.ROUTINE}>
-      <TableRoutine
-        tasks={tasks}
-        toggleTask={handleToggleTask}
-        addTask={handleAddTask}
-        updateText={handleUpdateText}
-      />
-    </DraggableCard>
+    <TableRoutine
+      tasks={tasks}
+      toggleTask={handleToggleTask}
+      addTask={handleAddTask}
+      updateText={handleUpdateText}
+    />
   );
 };

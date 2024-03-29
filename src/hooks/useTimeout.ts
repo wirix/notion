@@ -9,6 +9,7 @@ export default function useTimeout(callback, delay) {
   }, [callback]);
 
   const set = useCallback(() => {
+    //@ts-expect-error ts-migrate(2345) type number is not assignable to type null
     timeoutRef.current = setTimeout(() => callbackRef.current(), delay);
   }, [delay]);
 
