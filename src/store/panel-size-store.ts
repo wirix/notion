@@ -4,8 +4,7 @@ import { immer } from 'zustand/middleware/immer';
 import { PanelsEnum } from './panels-store';
 
 export interface Size {
-  width: number;
-  height: number;
+  width: number | undefined;
 }
 
 type State = {
@@ -21,8 +20,7 @@ export const useSizeStore = (panel: PanelsEnum) =>
     persist(
       immer((set) => ({
         size: {
-          width: 500,
-          height: 300,
+          width: 600,
         },
         changeSize: (size: Size) => {
           set((store) => {

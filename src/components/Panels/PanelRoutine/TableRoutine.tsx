@@ -35,54 +35,52 @@ export const TableRoutine = ({ tasks, toggleTask, addTask, updateText }: TableRo
   };
 
   return (
-    <>
-      <TableContainer component={Paper}>
-        <Table style={{ minWidth: 550 }}>
-          <TableHead>
-            <TableRow>
-              <TableCell>Рутина</TableCell>
-              {Object.values(weekdays).map((day) => (
-                <StylesTableCell width={'40px'} padding={'none'} key={day} align="center">
-                  {day}
+    <TableContainer component={Paper}>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell>Рутина</TableCell>
+            {Object.values(weekdays).map((day) => (
+              <StylesTableCell width={'40px'} padding={'none'} key={day} align="center">
+                {day}
+              </StylesTableCell>
+            ))}
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {tasks.map((task) => (
+            <TableRow key={task.id}>
+              <StylesTableCell component="th" scope="row">
+                <EditableText id={task.id} updateText={updateText}>
+                  {task.text}
+                </EditableText>
+              </StylesTableCell>
+              {Object.keys(weekdays).map((day) => (
+                <StylesTableCell padding={'none'} key={`${task}-${day}`} align="center">
+                  <Checkbox
+                    checked={task.completed[day]}
+                    onClick={() => toggleTask(task.id, day as Day)}
+                  />
                 </StylesTableCell>
               ))}
             </TableRow>
-          </TableHead>
-          <TableBody>
-            {tasks.map((task) => (
-              <TableRow key={task.id}>
-                <StylesTableCell component="th" scope="row">
-                  <EditableText id={task.id} updateText={updateText}>
-                    {task.text}
-                  </EditableText>
-                </StylesTableCell>
-                {Object.keys(weekdays).map((day) => (
-                  <StylesTableCell padding={'none'} key={`${task}-${day}`} align="center">
-                    <Checkbox
-                      checked={task.completed[day]}
-                      onClick={() => toggleTask(task.id, day as Day)}
-                    />
-                  </StylesTableCell>
-                ))}
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-        <Button
-          onClick={addTask}
-          sx={{
-            p: 1,
-            width: '100%',
-            display: 'flex',
-            justifyContent: 'flex-start',
-            alignItems: 'center',
-            bgcolor: '#fff',
-            ':hover': { bgcolor: '#fff' },
-          }}>
-          <AddIcon />
-          Новая
-        </Button>
-      </TableContainer>
-    </>
+          ))}
+        </TableBody>
+      </Table>
+      <Button
+        onClick={addTask}
+        sx={{
+          p: 1,
+          width: '100%',
+          display: 'flex',
+          justifyContent: 'flex-start',
+          alignItems: 'center',
+          bgcolor: '#fff',
+          ':hover': { bgcolor: '#fff' },
+        }}>
+        <AddIcon />
+        Новая
+      </Button>
+    </TableContainer>
   );
 };

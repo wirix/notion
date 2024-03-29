@@ -5,10 +5,12 @@ export const EditableText = ({
   children,
   id,
   updateText,
+  width = 180,
 }: {
   children: string;
   id: string;
   updateText: (id: string, text: string) => void;
+  width?: number;
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [text, setText] = useState(children);
@@ -23,7 +25,7 @@ export const EditableText = ({
   };
 
   return (
-    <Box position={'relative'}>
+    <Box position={'relative'} width={width}>
       {isEditing ? (
         <TextareaAutosize
           style={{

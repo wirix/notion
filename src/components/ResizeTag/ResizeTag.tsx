@@ -17,7 +17,6 @@ export const ResizeTag = ({ children, panel }: ResizeTagProps) => {
 
   const { ref } = useResizeObserver({
     box: 'border-box',
-    //@ts-expect-error FIXME: Property 'onResize'
     onResize,
   });
 
@@ -27,7 +26,7 @@ export const ResizeTag = ({ children, panel }: ResizeTagProps) => {
       style={{
         border: '1px solid palevioletred',
         width: size.width,
-        resize: 'both',
+        resize: 'horizontal',
         overflow: 'auto',
       }}>
       {children}

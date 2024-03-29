@@ -58,7 +58,7 @@ export const PanelTodoList = () => {
           <RestoreFromTrashIcon sx={{ fontSize: '25px' }} /> удалить
         </Button>
       </Box>
-      <Grid container columns={16} width={550} flexDirection={'column'}>
+      <Grid container columns={16} flexDirection={'column'}>
         <Grid item xs={16}>
           <Box display={'flex'} flexDirection={'column'}>
             {todos.map((todo) => (
@@ -80,12 +80,12 @@ export const PanelTodoList = () => {
                     }
                   }}
                 />
-                <Box minWidth={180} flexGrow={1} p={0} px={1}>
+                <Box flexGrow={1} p={0} px={1}>
                   <EditableText id={todo.id} updateText={handleUpdateText}>
                     {todo.text}
                   </EditableText>
                 </Box>
-                <Box minWidth={150}>
+                <Box width={150}>
                   <StatusOption id={todo.id} updateStore={updateTodo} status={todo.status} />
                 </Box>
                 <Box p={0} px={1}>

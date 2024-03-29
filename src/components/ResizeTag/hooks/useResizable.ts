@@ -3,7 +3,6 @@ import { useIsMounted } from '../../../hooks';
 
 interface Size {
   width: number | undefined;
-  height: number | undefined;
 }
 
 interface UseResizeObserverOptions {
@@ -12,8 +11,7 @@ interface UseResizeObserverOptions {
 }
 
 const initialSize: Size = {
-  width: 0,
-  height: 0,
+  width: undefined,
 };
 
 export function useResizeObserver<T extends HTMLDivElement = HTMLDivElement>(
@@ -21,21 +19,18 @@ export function useResizeObserver<T extends HTMLDivElement = HTMLDivElement>(
 ): Size & { ref: (nodeEle: T) => void } {
   const { box = 'content-box' } = options;
 
-  const [node, setNode] = useState<T>();
   const isMounted = useIsMounted();
-  const [{ width, height }, setSize] = useState<Size>(initialSize);
+  const [{ width }, setSize] = useState<Size>(initialSize);
   const previousSize = useRef<Size>(initialSize);
+  const onResize = useRef<((size: Size) => void) | undefined>(options.onResize);
 
-  const onResize = useRef<((size: Size) => void) | undefined>(undefined);
-  onResize.current = options.onResize;
-
-  const ref = useCallback((nodeEle: T) => {
+  const [node, setNode] = useState<T | null>(null);
+  const ref = useCallback((nodeEle: T | null) => {
     setNode(nodeEle);
   }, []);
 
   useEffect(() => {
     if (!node) return;
-
     if (typeof window === 'undefined' || !('ResizeObserver' in window)) return;
 
     const observer = new ResizeObserver(([entry]) => {
@@ -47,15 +42,11 @@ export function useResizeObserver<T extends HTMLDivElement = HTMLDivElement>(
           : 'contentBoxSize';
 
       const newWidth = extractSize(entry, boxProp, 'inlineSize');
-      const newHeight = extractSize(entry, boxProp, 'blockSize');
-
-      const hasChanged =
-        previousSize.current.width !== newWidth || previousSize.current.height !== newHeight;
+      const hasChanged = previousSize.current.width !== newWidth;
 
       if (hasChanged) {
-        const newSize: Size = { width: newWidth, height: newHeight };
+        const newSize: Size = { width: newWidth };
         previousSize.current.width = newWidth;
-        previousSize.current.height = newHeight;
 
         if (onResize.current) {
           onResize.current(newSize);
@@ -74,7 +65,7 @@ export function useResizeObserver<T extends HTMLDivElement = HTMLDivElement>(
     };
   }, [box, node, isMounted]);
 
-  return { width, height, ref };
+  return { width, ref };
 }
 
 type BoxSizesKey = keyof Pick<
@@ -94,5 +85,5 @@ function extractSize(
     return undefined;
   }
 
-  return Array.isArray(entry[box]) ? entry[box][0][sizeType] : (entry[box][sizeType] as number);
+  return Array.isArray(entry[box]) ? entry[box][0][sizeType] : entry[box][sizeType];
 }
