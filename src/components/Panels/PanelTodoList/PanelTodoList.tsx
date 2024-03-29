@@ -1,10 +1,9 @@
 import { StatusTodoEnum, useTodoStore } from '../../../store';
 import { DraggableCard, EditableText } from '../..';
 import { Box, Button, Checkbox, Grid } from '@mui/material';
-import { v4 as uuidv4 } from 'uuid';
 import { blueGrey, red } from '@mui/material/colors';
 import RestoreFromTrashIcon from '@mui/icons-material/RestoreFromTrash';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { PickerCalendar, StatusOption } from '.';
 import { PanelsEnum } from '../../../store/panels-store';
 
@@ -13,21 +12,25 @@ export const PanelTodoList = () => {
 
   const [choiceIds, setChoiceIds] = useState<string[]>([]);
 
-  const onAddTodoClick = () => {
+  const handleCreateTodo = () => {
     addTodo({
-      id: uuidv4(),
+      id: crypto.randomUUID(),
       text: '',
       date: new Date(),
       status: StatusTodoEnum.queue,
     });
   };
 
-  const onDeleteClick = () => {
+  const handleDeleteTodo = () => {
     choiceIds.forEach((id) => {
       deleteTodo(id);
     });
     setChoiceIds([]);
   };
+
+  const handleUpdateTextTodo = useCallback((id, field) => {
+    updateTodo(id, { ...field });
+  }, []);
 
   return (
     <DraggableCard
@@ -49,7 +52,7 @@ export const PanelTodoList = () => {
         />
         <Button
           disabled={choiceIds.length === 0}
-          onClick={onDeleteClick}
+          onClick={handleDeleteTodo}
           sx={{
             alignSelf: 'center',
             justifySelf: 'center',
@@ -81,7 +84,7 @@ export const PanelTodoList = () => {
                   }}
                 />
                 <Box minWidth={180} flexGrow={1} p={0} px={1}>
-                  <EditableText id={todo.id} updateStore={updateTodo}>
+                  <EditableText id={todo.id} updateText={handleUpdateTextTodo}>
                     {todo.text}
                   </EditableText>
                 </Box>
@@ -97,7 +100,7 @@ export const PanelTodoList = () => {
         </Grid>
         <Grid item xs={16}>
           <Box p={1} bgcolor={blueGrey[50]} borderRadius={2}>
-            <Button onClick={onAddTodoClick}>Новая задача</Button>
+            <Button onClick={handleCreateTodo}>Новая задача</Button>
           </Box>
         </Grid>
       </Grid>

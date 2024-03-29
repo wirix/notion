@@ -17,7 +17,7 @@ export const useDraggable = (panel: PanelsEnum) => {
   const ref = useCallback((nodeEle) => {
     setNode(nodeEle);
   }, []);
-  console.log(node, panel);
+
   const handleMouseDown = useCallback(
     (e: MouseEvent) => {
       if (!document.getElementById(`${DRAG_INDICATOR}-${panel}`)?.contains(e.target as Node)) {

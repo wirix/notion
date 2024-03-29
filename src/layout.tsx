@@ -51,7 +51,9 @@ const MultipleSelectCheckmarks = () => {
       <FormControl sx={{ m: 1, width: 300 }}>
         <Select
           multiple
-          value={panelList.filter((panel) => panels.indexOf(panel.type) > -1).map((panel) => panel.title)}
+          value={panelList
+            .filter((panel) => panels.indexOf(panel.type) > -1)
+            .map((panel) => panel.title)}
           renderValue={(selected) => selected.join(', ')}
           MenuProps={MenuProps}>
           {panelList.map((panel) => (
@@ -75,9 +77,6 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
             Заметки
           </Typography>
           <MultipleSelectCheckmarks />
-          <IconButton size="large" edge="end" color="inherit" sx={{ alignSelf: 'center' }}>
-            <MoreIcon />
-          </IconButton>
         </StyledToolbar>
       </StyledAppBar>
       {children}

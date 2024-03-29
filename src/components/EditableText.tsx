@@ -4,18 +4,18 @@ import { useState } from 'react';
 export const EditableText = ({
   children,
   id,
-  updateStore,
+  updateText,
 }: {
   children: string;
   id: string;
-  updateStore: (id: string, field: { text: string }) => void;
+  updateText: (id: string, text: string) => void;
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [text, setText] = useState(children);
 
   const editClose = () => {
     setIsEditing(false);
-    updateStore(id, { text });
+    updateText(id, text);
   };
 
   const editOpen = () => {

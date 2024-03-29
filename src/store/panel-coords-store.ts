@@ -28,8 +28,8 @@ export const usePanelCoordsStore = (panel: PanelsEnum) =>
           coords: { dx: 0, dy: 0 },
         },
         changeCoords: (coords: Coords) => {
-          set((state) => {
-            state.panel.coords = coords;
+          set((store) => {
+            store.panel.coords = coords;
           });
         },
       })),
