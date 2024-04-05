@@ -1,5 +1,6 @@
 import { Box, TextareaAutosize, Typography } from '@mui/material';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
+import { useOutsideClick } from '../hooks';
 
 export const EditableText = ({
   children,
@@ -12,21 +13,25 @@ export const EditableText = ({
   updateText: (id: string, text: string) => void;
   width?: number;
 }) => {
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
   const [text, setText] = useState(children);
+  const elementRef = useRef(null);
 
-  const editClose = () => {
-    setIsEditing(false);
-    updateText(id, text);
-  };
+  useOutsideClick({
+    elementRef,
+    onOutsideClick: () => {
+      setIsEditMode(false);
+      updateText(id, text);
+    },
+  });
 
   const editOpen = () => {
-    setIsEditing(true);
+    setIsEditMode(true);
   };
 
   return (
     <Box position={'relative'} width={width}>
-      {isEditing ? (
+      {isEditMode ? (
         <TextareaAutosize
           style={{
             padding: 4,
@@ -35,10 +40,10 @@ export const EditableText = ({
             resize: 'none',
             border: '1px solid lightgray',
           }}
+          ref={elementRef}
           value={text}
           autoFocus
           onChange={(e) => setText(e.target.value)}
-          onBlur={editClose}
         />
       ) : (
         <Typography style={{ wordWrap: 'break-word' }} onClick={editOpen}>

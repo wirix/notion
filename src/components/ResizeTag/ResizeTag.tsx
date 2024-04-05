@@ -13,8 +13,6 @@ export const ResizeTag = ({ children, panel }: ResizeTagProps) => {
   const { size, changeSize } = useSizeStore(panel)();
   const onResize = useDebounceCallback(changeSize, 200);
 
-  console.log(size, panel);
-
   const { ref } = useResizeObserver({
     box: 'border-box',
     onResize,
