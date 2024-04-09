@@ -4,13 +4,21 @@ import { PanelRoutine } from './PanelRoutine';
 import { PanelsEnum, usePanelsStore } from '../../store/panels-store';
 import { Panel } from '.';
 
+interface Panels {
+  type: PanelsEnum;
+  children: React.ReactNode;
+  width?: number;
+}
+
 const panels = [
   {
     type: PanelsEnum.TODO,
+    width: 560,
     Component: <PanelTodoList />,
   },
   {
     type: PanelsEnum.ROUTINE,
+    width: 520,
     Component: <PanelRoutine />,
   },
 ];
@@ -25,7 +33,7 @@ export const Panels = () => {
         .map((panel, index) => {
           const { Component, type } = panel;
           return (
-            <Panel key={`${type}-${index}`} type={type}>
+            <Panel key={`${type}-${index}`} type={type} width={panel.width}>
               {Component}
             </Panel>
           );

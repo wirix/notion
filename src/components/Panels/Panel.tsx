@@ -5,13 +5,14 @@ import { ResizeTag } from '../ResizeTag';
 
 interface PanelPanels extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   type: PanelsEnum;
+  width?: number;
   children: ReactNode;
 }
 
-export const Panel = ({ children, type, ...props }: PanelPanels) => {
+export const Panel = ({ children, type, width = 600, ...props }: PanelPanels) => {
   return (
     <Draggable panel={type}>
-      <ResizeTag panel={type}>
+      <ResizeTag panel={type} width={width}>
         <Card
           panel={type}
           style={{

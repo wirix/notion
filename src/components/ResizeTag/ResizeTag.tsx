@@ -7,10 +7,11 @@ import { Box } from '@mui/material';
 interface ResizeTagProps {
   children: ReactNode;
   panel: PanelsEnum;
+  width?: number;
 }
 
-export const ResizeTag = ({ children, panel }: ResizeTagProps) => {
-  const { size, changeSize } = useSizeStore(panel)();
+export const ResizeTag = ({ children, panel, width }: ResizeTagProps) => {
+  const { size, changeSize } = useSizeStore(panel, width)();
   const onResize = useDebounceCallback(changeSize, 200);
 
   const { ref } = useResizeObserver({
