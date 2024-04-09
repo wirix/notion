@@ -1,8 +1,7 @@
 import { StatusTodoEnum, useTodoStore } from '../../../store';
-import { EditableText } from '../..';
+import { ButtonIcon, EditableText } from '../..';
 import { Box, Button, Checkbox, Grid } from '@mui/material';
-import { blueGrey, red } from '@mui/material/colors';
-import RestoreFromTrashIcon from '@mui/icons-material/RestoreFromTrash';
+import { blueGrey } from '@mui/material/colors';
 import { Fragment, useCallback, useState } from 'react';
 import { PickerCalendar, StatusOption } from '.';
 
@@ -47,16 +46,13 @@ export const PanelTodoList = () => {
             }
           }}
         />
-        <Button
+        <ButtonIcon
           disabled={choiceIds.length === 0}
-          onClick={handleDeleteTodo}
-          sx={{
-            alignSelf: 'center',
-            justifySelf: 'center',
-            color: red[700],
-          }}>
-          <RestoreFromTrashIcon sx={{ fontSize: '25px' }} /> удалить
-        </Button>
+          icon={'trash'}
+          appearance={'success'}
+          onClick={handleDeleteTodo}>
+          удалить
+        </ButtonIcon>
       </Box>
       <Grid container columns={16} flexDirection={'column'}>
         <Grid item xs={16}>
