@@ -49,7 +49,7 @@ export const PanelTodoList = () => {
         <ButtonIcon
           disabled={choiceIds.length === 0}
           icon={'trash'}
-          appearance={'success'}
+          appearance={'danger'}
           onClick={handleDeleteTodo}>
           удалить
         </ButtonIcon>

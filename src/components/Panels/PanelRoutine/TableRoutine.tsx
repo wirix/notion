@@ -5,10 +5,11 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { Button, Checkbox, styled } from '@mui/material';
+import { Button, Checkbox } from '@mui/material';
 import { Task, Day } from '../../../store/routine-store';
 import AddIcon from '@mui/icons-material/Add';
 import { EditableText } from '../..';
+import { StylesTableCell } from '.';
 
 interface TableRoutineProps {
   tasks: Task[];
@@ -16,12 +17,6 @@ interface TableRoutineProps {
   updateText: (id: string, text: string) => void;
   toggleTask: (id: string, day: Day) => void;
 }
-
-const StylesTableCell = styled(TableCell)(() => ({
-  '&.css-v3ell-MuiButtonBase-root-MuiCheckbox-root': {
-    padding: 0,
-  },
-}));
 
 export const TableRoutine = ({ tasks, toggleTask, addTask, updateText }: TableRoutineProps) => {
   const weekdays: Record<Day, string> = {

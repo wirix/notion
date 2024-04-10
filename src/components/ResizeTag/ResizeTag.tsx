@@ -2,7 +2,7 @@ import { ReactNode } from 'react';
 import { useResizeObserver } from './hooks';
 import { useDebounceCallback } from 'usehooks-ts';
 import { PanelsEnum, useSizeStore } from '../../store';
-import { Box } from '@mui/material';
+import { BoxStyled } from '.';
 
 interface ResizeTagProps {
   children: ReactNode;
@@ -20,15 +20,8 @@ export const ResizeTag = ({ children, panel, width }: ResizeTagProps) => {
   });
 
   return (
-    <Box
-      ref={ref}
-      style={{
-        border: '1px solid palevioletred',
-        width: size.width,
-        resize: 'horizontal',
-        overflow: 'auto',
-      }}>
+    <BoxStyled ref={ref} width={size.width}>
       {children}
-    </Box>
+    </BoxStyled>
   );
 };

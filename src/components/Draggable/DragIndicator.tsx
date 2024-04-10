@@ -1,7 +1,12 @@
 import { DRAG_INDICATOR } from './constants';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
+import { SvgIconProps } from '@mui/material';
 
-export const DragIndicator = ({ panel, ...props }) => {
+interface DragIndicatorProps extends SvgIconProps {
+  panel: string;
+}
+
+export const DragIndicator = ({ panel, ...props }: DragIndicatorProps) => {
   return (
     <DragIndicatorIcon
       id={`${DRAG_INDICATOR}-${panel}`}

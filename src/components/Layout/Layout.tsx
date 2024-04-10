@@ -1,29 +1,12 @@
-import * as React from 'react';
-import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import { styled } from '@mui/material';
-import { PanelsEnum, usePanelsStore } from './store/panels-store';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import ListItemText from '@mui/material/ListItemText';
 import Select from '@mui/material/Select';
 import Checkbox from '@mui/material/Checkbox';
-
-const StyledToolbar = styled(Toolbar)(({ theme }) => ({
-  alignItems: 'flex-start',
-  paddingTop: theme.spacing(1),
-  paddingBottom: theme.spacing(1),
-}));
-
-const StyledAppBar = styled(AppBar)(() => ({
-  position: 'static',
-  overflow: 'hidden',
-  borderBottomRightRadius: 8,
-  borderBottomLeftRadius: 8,
-  marginBottom: 24,
-}));
+import { StyledAppBar, StyledToolbar } from '.';
+import { PanelsEnum, usePanelsStore } from '../../store';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;

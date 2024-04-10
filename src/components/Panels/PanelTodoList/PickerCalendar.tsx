@@ -1,22 +1,7 @@
-import { styled } from '@mui/material';
-import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
-
-const StylesDatePicker = styled(DatePicker)(() => ({
-  border: 0,
-  '& .MuiOutlinedInput-notchedOutline': {
-    border: 0,
-  },
-  '& .MuiInputBase-input': {
-    padding: 1,
-    pr: 0,
-    width: 80,
-  },
-  '& .MuiButtonBase-root': {
-    pl: 0,
-  },
-}));
+import { StylesDatePicker } from '.';
 
 export const PickerCalendar = ({
   date,

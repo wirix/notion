@@ -1,7 +1,6 @@
 import { DetailedHTMLProps, HTMLAttributes, ReactNode } from 'react';
-import { Card, Draggable } from '..';
+import { Card, Draggable, ResizeTag } from '..';
 import { PanelsEnum } from '../../store';
-import { ResizeTag } from '../ResizeTag';
 
 interface PanelPanels extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   type: PanelsEnum;

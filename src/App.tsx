@@ -1,5 +1,4 @@
-import { Panels } from './components';
-import { Layout } from './layout';
+import { Panels, Layout } from './components';
 
 export const App = () => {
   return (

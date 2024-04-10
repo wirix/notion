@@ -1,6 +1,5 @@
-import { Box } from '@mui/material';
 import { useDraggable } from './hooks';
-import { DragIndicator } from '.';
+import { DragIndicator, StyledBox } from '.';
 import { PanelsEnum } from '../../store/panels-store';
 import { DetailedHTMLProps, HTMLAttributes, ReactNode } from 'react';
 
@@ -13,7 +12,7 @@ interface DraggableProps
 export const Draggable = ({ children, panel, ...props }: DraggableProps) => {
   const { ref } = useDraggable(panel);
   return (
-    <Box
+    <StyledBox
       ref={ref}
       sx={{
         display: 'flex',
@@ -23,6 +22,6 @@ export const Draggable = ({ children, panel, ...props }: DraggableProps) => {
       {...props}>
       {children}
       <DragIndicator panel={panel} />
-    </Box>
+    </StyledBox>
   );
 };
