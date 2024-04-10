@@ -7,7 +7,7 @@ import { BoxStyled } from '.';
 interface ResizeTagProps {
   children: ReactNode;
   panel: PanelsEnum;
-  width?: number;
+  width: number;
 }
 
 export const ResizeTag = ({ children, panel, width }: ResizeTagProps) => {

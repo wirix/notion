@@ -22,6 +22,7 @@ const MenuProps = {
 const panelList = [
   { type: PanelsEnum.TODO, title: 'Список задач' },
   { type: PanelsEnum.ROUTINE, title: 'Рутина' },
+  { type: PanelsEnum.CLOCK, title: 'Часы' },
 ];
 
 const MultipleSelectCheckmarks = () => {

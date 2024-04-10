@@ -5,6 +5,7 @@ import { immer } from 'zustand/middleware/immer';
 export enum PanelsEnum {
   TODO = 'TODO',
   ROUTINE = 'ROUTINE',
+  CLOCK = 'CLOCK',
 }
 
 type Actions = {

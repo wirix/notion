@@ -15,7 +15,7 @@ type Actions = {
   changeSize: (size: Size) => void;
 };
 
-export const useSizeStore = (panel: PanelsEnum, width = 600) =>
+export const useSizeStore = (panel: PanelsEnum, width: number) =>
   create<State & Actions>()(
     persist(
       immer((set) => ({

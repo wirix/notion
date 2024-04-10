@@ -1,6 +1,7 @@
 import { Box } from '@mui/material';
 import { PanelTodoList } from './PanelTodoList';
 import { PanelRoutine } from './PanelRoutine';
+import { PanelClock } from './PanelClock';
 import { PanelsEnum, usePanelsStore } from '../../store/panels-store';
 import { Panel } from '.';
 
@@ -13,13 +14,18 @@ interface Panels {
 const panels = [
   {
     type: PanelsEnum.TODO,
-    width: 560,
+    width: 720,
     Component: <PanelTodoList />,
   },
   {
     type: PanelsEnum.ROUTINE,
-    width: 520,
+    width: 720,
     Component: <PanelRoutine />,
+  },
+  {
+    type: PanelsEnum.CLOCK,
+    width: 360,
+    Component: <PanelClock />,
   },
 ];
 
