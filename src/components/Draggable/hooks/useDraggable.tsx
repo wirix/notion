@@ -28,6 +28,7 @@ export const useDraggable = (panel: PanelsEnum) => {
       if (!document.getElementById(`${DRAG_INDICATOR}-${panel}`)?.contains(e.target as Node)) {
         return;
       }
+
       isDragging.current = true;
       const startPos = {
         x: e.clientX - dx,
@@ -37,6 +38,7 @@ export const useDraggable = (panel: PanelsEnum) => {
       const handleMouseMove = (e: MouseEvent) => {
         const dxCandidate = e.clientX - startPos.x;
         const dyCandidate = e.clientY - startPos.y;
+
         setOffset({
           dx: dxCandidate >= 0 ? dxCandidate : 0,
           dy: dyCandidate >= 0 ? dyCandidate : 0,
@@ -58,7 +60,7 @@ export const useDraggable = (panel: PanelsEnum) => {
   const handleTouchStart = useCallback(
     (e: TouchEvent) => {
       const touch = e.touches[0];
-
+      console.log(dx);
       const startPos = {
         x: touch.clientX - dx,
         y: touch.clientY - dy,
@@ -68,6 +70,7 @@ export const useDraggable = (panel: PanelsEnum) => {
         const touch = e.touches[0];
         const dxCandidate = touch.clientX - startPos.x;
         const dyCandidate = touch.clientY - startPos.y;
+
         setOffset({
           dx: dxCandidate >= 0 ? dxCandidate : 0,
           dy: dyCandidate >= 0 ? dyCandidate : 0,
@@ -89,9 +92,7 @@ export const useDraggable = (panel: PanelsEnum) => {
     if (!nodeEl || !nodeParent.current) {
       return;
     }
-    console.log(dx + nodeEl.clientWidth <= nodeParent.current.clientWidth &&
-      dy + nodeEl.clientHeight <= nodeParent.current.clientHeight)
-    if (dx >= 0 && dy >= 0) {
+    if (dx >= 0 && dy >= 0 && dx + nodeEl.clientWidth <= nodeParent.current?.clientWidth) {
       nodeEl.style.transform = `translate3d(${dx}px, ${dy}px, 0)`;
       nodeEl.style.zIndex = isDragging.current ? `50` : `1`;
     }
@@ -106,6 +107,12 @@ export const useDraggable = (panel: PanelsEnum) => {
 
   useDebounce(
     () => {
+      if (!nodeEl || !nodeParent.current) {
+        return;
+      }
+      if (dx + nodeEl.clientWidth >= nodeParent.current?.clientWidth) {
+        return;
+      }
       changeCoords({ dx, dy });
     },
     100,
