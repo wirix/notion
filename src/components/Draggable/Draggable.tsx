@@ -13,7 +13,7 @@ export const Draggable = ({ children, panel, width, ...props }: DraggableProps) 
   const { ref } = useDraggable(panel);
 
   return (
-    <StyledBox ref={ref} minWidth={width} maxWidth={1440} {...props}>
+    <StyledBox ref={ref} width={width} maxWidth={1440} {...props}>
       {children}
       <DragIndicator panel={panel} />
     </StyledBox>

@@ -4,15 +4,20 @@ import { usePanelCoordsStore } from '../../../store';
 import { useDebounce } from '../../../hooks';
 import { DRAG_INDICATOR } from '../constants';
 import { PanelsEnum } from '../../../store/panels-store';
+import { useDraggableContainerContext } from '.';
 
 export const useDraggable = (panel: PanelsEnum) => {
   const { changeCoords } = usePanelCoordsStore(panel)();
   const { coords } = usePanelCoordsStore(panel)((store) => store.panel);
-  const [node, setNode] = useState<HTMLElement | null>(null);
+
+  const [nodeEl, setNode] = useState<HTMLElement | null>(null);
   const [{ dx, dy }, setOffset] = useState({
     ...coords,
   });
+
   const isDragging = useRef(false);
+
+  const { ref: nodeParent } = useDraggableContainerContext();
 
   const ref = useCallback((nodeEle) => {
     setNode(nodeEle);
@@ -30,9 +35,12 @@ export const useDraggable = (panel: PanelsEnum) => {
       };
 
       const handleMouseMove = (e: MouseEvent) => {
-        const dx = e.clientX - startPos.x;
-        const dy = e.clientY - startPos.y;
-        setOffset({ dx, dy });
+        const dxCandidate = e.clientX - startPos.x;
+        const dyCandidate = e.clientY - startPos.y;
+        setOffset({
+          dx: dxCandidate >= 0 ? dxCandidate : 0,
+          dy: dyCandidate >= 0 ? dyCandidate : 0,
+        });
       };
 
       const handleMouseUp = () => {
@@ -58,9 +66,12 @@ export const useDraggable = (panel: PanelsEnum) => {
 
       const handleTouchMove = (e: TouchEvent) => {
         const touch = e.touches[0];
-        const dx = touch.clientX - startPos.x;
-        const dy = touch.clientY - startPos.y;
-        setOffset({ dx, dy });
+        const dxCandidate = touch.clientX - startPos.x;
+        const dyCandidate = touch.clientY - startPos.y;
+        setOffset({
+          dx: dxCandidate >= 0 ? dxCandidate : 0,
+          dy: dyCandidate >= 0 ? dyCandidate : 0,
+        });
       };
 
       const handleTouchEnd = () => {
@@ -75,23 +86,23 @@ export const useDraggable = (panel: PanelsEnum) => {
   );
 
   useEffect(() => {
-    if (node) {
-      node.style.transform = `translate3d(${dx}px, ${dy}px, 0)`;
-      node.style.zIndex = isDragging.current ? `50` : `1`;
-    }
-  }, [node, dx, dy]);
-
-  useEffect(() => {
-    if (!node) {
+    if (!nodeEl || !nodeParent.current) {
       return;
     }
-    node.addEventListener('mousedown', handleMouseDown);
-    node.addEventListener('touchstart', handleTouchStart);
+    console.log(dx + nodeEl.clientWidth <= nodeParent.current.clientWidth &&
+      dy + nodeEl.clientHeight <= nodeParent.current.clientHeight)
+    if (dx >= 0 && dy >= 0) {
+      nodeEl.style.transform = `translate3d(${dx}px, ${dy}px, 0)`;
+      nodeEl.style.zIndex = isDragging.current ? `50` : `1`;
+    }
+    nodeEl.addEventListener('mousedown', handleMouseDown);
+    nodeEl.addEventListener('touchstart', handleTouchStart);
+
     return () => {
-      node.removeEventListener('mousedown', handleMouseDown);
-      node.removeEventListener('touchstart', handleTouchStart);
+      nodeEl.removeEventListener('mousedown', handleMouseDown);
+      nodeEl.removeEventListener('touchstart', handleTouchStart);
     };
-  }, [node, dx, dy]);
+  }, [nodeEl, dx, dy]);
 
   useDebounce(
     () => {
