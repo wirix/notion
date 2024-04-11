@@ -1,4 +1,4 @@
-import Box from '@mui/material/Box';
+import Box, { BoxProps } from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
@@ -7,6 +7,11 @@ import Select from '@mui/material/Select';
 import Checkbox from '@mui/material/Checkbox';
 import { StyledAppBar, StyledToolbar } from '.';
 import { PanelsEnum, usePanelsStore } from '../../store';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+
+interface LayoutProps extends BoxProps {
+  toogleCalendar: () => void;
+}
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -25,11 +30,12 @@ const panelList = [
   { type: PanelsEnum.CLOCK, title: 'Часы' },
 ];
 
-const MultipleSelectCheckmarks = () => {
+const MultipleSelectCheckmarks = ({ toogleCalendar }) => {
   const { panels, togglePanel } = usePanelsStore();
 
   return (
-    <div>
+    <Box display={'flex'} alignItems={'center'}>
+      <CalendarMonthIcon sx={{ cursor: 'pointer', mr: 2, fontSize: '30px' }} onClick={toogleCalendar} />
       <FormControl sx={{ m: 1, width: 300 }}>
         <Select
           multiple
@@ -46,19 +52,21 @@ const MultipleSelectCheckmarks = () => {
           ))}
         </Select>
       </FormControl>
-    </div>
+    </Box>
   );
 };
-
-export const Layout = ({ children }: { children: React.ReactNode }) => {
+// openCalendar потом удалить, избавиться от перекидывания, а на прямую получать(ex zustand, context)
+export const Layout = ({ children, toogleCalendar, ...props }: LayoutProps) => {
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', maxWidth: 1440, margin: '0 auto' }}>
+    <Box
+      sx={{ display: 'flex', flexDirection: 'column', maxWidth: 1440, margin: '0 auto' }}
+      {...props}>
       <StyledAppBar>
         <StyledToolbar>
           <Typography variant="h5" noWrap component="div" sx={{ flexGrow: 1, alignSelf: 'center' }}>
             Заметки
           </Typography>
-          <MultipleSelectCheckmarks />
+          <MultipleSelectCheckmarks toogleCalendar={toogleCalendar} />
         </StyledToolbar>
       </StyledAppBar>
       {children}

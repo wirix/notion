@@ -60,7 +60,6 @@ export const useDraggable = (panel: PanelsEnum) => {
   const handleTouchStart = useCallback(
     (e: TouchEvent) => {
       const touch = e.touches[0];
-      console.log(dx);
       const startPos = {
         x: touch.clientX - dx,
         y: touch.clientY - dy,

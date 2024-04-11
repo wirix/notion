@@ -34,6 +34,7 @@ export const EditableText = ({
       {isEditMode ? (
         <TextareaAutosize
           style={{
+            width: '300px',
             padding: 4,
             outline: 0,
             borderRadius: 4,
@@ -46,7 +47,7 @@ export const EditableText = ({
           onChange={(e) => setText(e.target.value)}
         />
       ) : (
-        <Typography style={{ wordWrap: 'break-word' }} onClick={editOpen}>
+        <Typography style={{ wordWrap: 'break-word', width: '300px' }} onClick={editOpen}>
           {text.length ? text : 'Пусто'}
         </Typography>
       )}
