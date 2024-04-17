@@ -18,17 +18,17 @@ interface TableRoutineProps {
   toggleTask: (id: string, day: Day) => void;
 }
 
-export const TableRoutine = ({ tasks, toggleTask, addTask, updateText }: TableRoutineProps) => {
-  const weekdays: Record<Day, string> = {
-    monday: 'Пн',
-    tuesday: 'Вт',
-    wednesday: 'Ср',
-    thursday: 'Чт',
-    friday: 'Пт',
-    saturday: 'Сб',
-    sunday: 'Вс',
-  };
+const weekdays: Record<Day, string> = {
+  monday: 'Пн',
+  tuesday: 'Вт',
+  wednesday: 'Ср',
+  thursday: 'Чт',
+  friday: 'Пт',
+  saturday: 'Сб',
+  sunday: 'Вс',
+};
 
+export const TableRoutine = ({ tasks, toggleTask, addTask, updateText }: TableRoutineProps) => {
   return (
     <TableContainer component={Paper}>
       <Table>

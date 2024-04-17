@@ -1,16 +1,18 @@
 import { Box, BoxProps } from '@mui/material';
+import { CalendarTable } from './TableCalendar';
 
 interface CalendarProps extends BoxProps {
   isOpenCalendar: boolean;
 }
 
 export const Calendar = ({ isOpenCalendar, ...props }: CalendarProps) => {
+
   return (
     <Box
       position={'absolute'}
       left={0}
+      zIndex={1000}
       top={isOpenCalendar ? 0 : '-100vh'}
-      height={'100vh'}
       width={'100%'}
       pt={'90px'}
       bgcolor={'primary.main'}
@@ -21,7 +23,7 @@ export const Calendar = ({ isOpenCalendar, ...props }: CalendarProps) => {
         transition: 'top 0.5s ease',
       }}
       {...props}>
-      fregerg
+      <CalendarTable />
     </Box>
   );
 };

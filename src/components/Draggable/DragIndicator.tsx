@@ -16,7 +16,7 @@ export const DragIndicator = ({ panel, ...props }: DragIndicatorProps) => {
         display: 'flex',
         alignSelf: 'flex-end',
         right: 0,
-        zIndex: 75,
+        zIndex: 100,
       }}
       color={'secondary'}
       {...props}

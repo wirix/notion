@@ -3,6 +3,7 @@ import { Button } from '.';
 import { ButtonProps } from '@mui/material';
 import cn from 'classnames';
 import trash from '@mui/icons-material/RestoreFromTrash';
+import { ReactNode } from 'react';
 
 const icons = {
   trash,
@@ -11,6 +12,7 @@ const icons = {
 type Icons = keyof typeof icons;
 
 interface ButtonIconProps extends ButtonProps {
+  children?: ReactNode;
   icon: Icons;
   appearance: 'success' | 'warning' | 'danger';
 }

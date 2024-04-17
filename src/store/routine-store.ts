@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
-const days = {
+export const days = {
   monday: 'monday',
   tuesday: 'tuesday',
   wednesday: 'wednesday',

@@ -4,7 +4,7 @@ import { Calendar } from './components/Calendar';
 import { DraggableContainerProvider } from './components/Draggable/contexts';
 
 export const App = () => {
-  const [isOpenCalendar, setIsOpenCalendar] = useState(false);
+  const [isOpenCalendar, setIsOpenCalendar] = useState(true);
 
   const toogleCalendar = useCallback(() => {
     setIsOpenCalendar((prev) => !prev);
