@@ -18,7 +18,7 @@ interface TableRoutineProps {
   toggleTask: (id: string, day: Day) => void;
 }
 
-const weekdays: Record<Day, string> = {
+export const weekdays: Record<Day, string> = {
   monday: 'Пн',
   tuesday: 'Вт',
   wednesday: 'Ср',

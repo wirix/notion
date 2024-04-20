@@ -1,12 +1,11 @@
 import { Box, BoxProps } from '@mui/material';
-import { CalendarTable } from './TableCalendar';
+import { TableCalendar } from './TableCalendar';
 
 interface CalendarProps extends BoxProps {
   isOpenCalendar: boolean;
 }
 
 export const Calendar = ({ isOpenCalendar, ...props }: CalendarProps) => {
-
   return (
     <Box
       position={'absolute'}
@@ -23,7 +22,7 @@ export const Calendar = ({ isOpenCalendar, ...props }: CalendarProps) => {
         transition: 'top 0.5s ease',
       }}
       {...props}>
-      <CalendarTable />
+      <TableCalendar />
     </Box>
   );
 };

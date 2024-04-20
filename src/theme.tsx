@@ -1,5 +1,6 @@
 import { createTheme } from '@mui/material';
 import { orange, grey } from '@mui/material/colors';
+// import RalewayWoff2 from './fonts/Raleway-Regular.woff2';
 
 export const theme = createTheme({
   palette: {
@@ -15,6 +16,7 @@ export const theme = createTheme({
     allVariants: {
       color: grey[900],
     },
+    fontFamily: 'Raleway, Arial',
   },
   components: {
     MuiButton: {
