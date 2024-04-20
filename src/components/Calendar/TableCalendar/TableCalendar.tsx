@@ -1,5 +1,5 @@
 import { days } from '../../../store';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { ButtonIcon } from '../../ButtonIcon';
 import { Box, TextField, Typography } from '@mui/material';
 import { weekdays } from '../../Panels/PanelRoutine/TableRoutine';
@@ -22,9 +22,10 @@ const hoursArray = Array.from({ length: 24 }, (_, index) => {
 
 export const TableCalendar = () => {
   const {
-    functions: { handleMouseDown, handleMouseUp, handleMouseLeave, handleMouseMove },
-    state: { elements, currentColumn },
+    functions: { handleMouseDown, handleMouseUp, handleMouseMove },
+    state: { elements, selectedColIndex },
   } = useSelectElements();
+  console.log(elements, selectedColIndex);
 
   const [weekOffset, setWeekOffset] = useState(0);
   const [toggleModal, setToggleModal] = useState(false);
@@ -43,6 +44,11 @@ export const TableCalendar = () => {
     setToggleModal(false);
     handleMouseUp();
   };
+
+  const cancelTask = useCallback(() => {
+    setToggleModal(false);
+    handleMouseUp();
+  }, []);
 
   const getDatesForWeek = (weekOffset: number) => {
     const currentDate = new Date();
@@ -68,7 +74,7 @@ export const TableCalendar = () => {
 
   return (
     <Typography component={'div'} display={'flex'} color={'black'}>
-      <Modal isOpen={toggleModal} onClose={() => setToggleModal(false)}>
+      <Modal isOpen={toggleModal} onClose={cancelTask}>
         <TextField sx={{ mb: 2 }} label="Задача" variant="outlined" />
         <Button onClick={createTask}>Создать</Button>
       </Modal>
@@ -136,11 +142,10 @@ export const TableCalendar = () => {
                     key={indexHour}
                     onMouseMove={() => handleMouseMove(indexHour, indexDay)}
                     onMouseDown={() => handleMouseDown(indexHour, indexDay)}
-                    onMouseLeave={() => handleMouseLeave(indexHour, indexDay)}
                     onMouseUp={openModal}>
                     <Box
                       bgcolor={
-                        currentColumn === indexDay && elements.includes(indexHour)
+                        selectedColIndex === indexDay && elements.includes(indexHour)
                           ? 'primary.light'
                           : 'primary.main'
                       }

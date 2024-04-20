@@ -2,50 +2,34 @@ import { useCallback, useRef, useState } from 'react';
 
 export const useSelectElements = () => {
   const [isMouseDown, setIsMouseDown] = useState(false);
-  const [selectedElements, setSelectedElements] = useState<number[]>([]);
-  const indexColumn = useRef<number | null>(null);
+  const [selectedCells, setSelectedCells] = useState<number[]>([]);
+  const colIndex = useRef<number | null>(null);
 
   const handleMouseDown = useCallback(
-    (index: number, newIndexColumn: number) => {
+    (cell: number, newColIndex: number) => {
       setIsMouseDown(true);
-      if (indexColumn.current === null) indexColumn.current = newIndexColumn;
-      if (selectedElements.length === 0) setSelectedElements([index]);
+      if (colIndex.current === null) colIndex.current = newColIndex;
+      if (!selectedCells.length) setSelectedCells([cell]);
     },
-    [selectedElements],
+    [selectedCells],
   );
 
   const handleMouseUp = useCallback(() => {
-    indexColumn.current = null;
+    colIndex.current = null;
     setIsMouseDown(false);
-    setSelectedElements([]);
+    setSelectedCells([]);
   }, []);
 
-  const handleMouseLeave = useCallback(
-    (index: number, newIndexColumn: number) => {
-      if (!isMouseDown) return;
-      if (indexColumn.current === null) indexColumn.current = newIndexColumn;
-      if (indexColumn.current !== newIndexColumn) {
-        setSelectedElements((elements) => [...elements, index]);
-      }
-    },
-    [isMouseDown],
-  );
-
   const handleMouseMove = useCallback(
-    (index: number, newIndexColumn: number) => {
-      if (
-        !isMouseDown ||
-        selectedElements.includes(index) ||
-        indexColumn.current !== newIndexColumn
-      )
-        return;
-      setSelectedElements((elements) => [...elements, index]);
+    (cell: number, newColIndex: number) => {
+      if (!isMouseDown || selectedCells.includes(cell) || colIndex.current !== newColIndex) return;
+      setSelectedCells((elements) => [...elements, cell]);
     },
-    [isMouseDown, selectedElements],
+    [isMouseDown, selectedCells],
   );
 
   return {
-    functions: { handleMouseDown, handleMouseUp, handleMouseLeave, handleMouseMove },
-    state: { elements: selectedElements, isClick: isMouseDown, currentColumn: indexColumn.current },
+    functions: { handleMouseDown, handleMouseUp, handleMouseMove },
+    state: { elements: selectedCells, isClick: isMouseDown, selectedColIndex: colIndex.current },
   };
 };
