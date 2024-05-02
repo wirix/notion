@@ -22,8 +22,8 @@ const hoursArray = Array.from({ length: 24 }, (_, index) => {
 
 export const TableCalendar = () => {
   const {
-    functions: { handleMouseDown, handleMouseUp, handleMouseMove },
-    state: { elements, selectedColIndex },
+    functions: { handleMouseDown, handleMouseUp, handleMouseMove, setIsClick },
+    state: { elements, selectedColIndex, isClick },
   } = useSelectElements();
   console.log(elements, selectedColIndex);
 
@@ -35,7 +35,10 @@ export const TableCalendar = () => {
   };
 
   const openModal = () => {
-    if (elements.length) setToggleModal(true);
+    setIsClick(false);
+    if (elements.length) {
+      setToggleModal(true);
+    }
   };
 
   const createTask = () => {
@@ -81,7 +84,12 @@ export const TableCalendar = () => {
 
       <NextTasks width={'300px'} mr={1} />
 
-      <Box height={'calc(100vh - 90px)'} display={'flex'} flexDirection={'column'} flexGrow={1}>
+      <Box
+        height={'calc(100vh - 90px)'}
+        display={'flex'}
+        flexDirection={'column'}
+        flexGrow={1}
+        onMouseLeave={() => openModal()}>
         <Box display={'flex'}>
           <ButtonIcon onClick={() => handleSetWeekOffset(-1)} icon="trash" appearance="danger" />
           <ButtonIcon onClick={() => handleSetWeekOffset(1)} icon="trash" appearance="danger" />
@@ -111,7 +119,7 @@ export const TableCalendar = () => {
           flexGrow={1}>
           <Box display={'flex'} flexDirection={'column'}>
             {hoursArray.map((hour, index) => (
-              <Box
+              <Typography
                 key={index}
                 display={'flex'}
                 flexDirection={'column'}
@@ -120,7 +128,7 @@ export const TableCalendar = () => {
                 py={4}
                 sx={{ userSelect: 'none' }}>
                 {hour.name}
-              </Box>
+              </Typography>
             ))}
           </Box>
           {daysArray.map((_, indexDay) => (
@@ -136,22 +144,34 @@ export const TableCalendar = () => {
                 borderLeft={1}
                 sx={{
                   cursor: 'row-resize',
+                  borderColor: 'secondary.main',
                 }}>
                 {new Array(HOURS_COUNT).fill(null).map((_, indexHour) => (
                   <div
                     key={indexHour}
                     onMouseMove={() => handleMouseMove(indexHour, indexDay)}
                     onMouseDown={() => handleMouseDown(indexHour, indexDay)}
-                    onMouseUp={openModal}>
+                    onMouseUp={() => openModal()}>
                     <Box
                       bgcolor={
                         selectedColIndex === indexDay && elements.includes(indexHour)
-                          ? 'primary.light'
+                          ? 'success.main'
                           : 'primary.main'
                       }
                       borderTop={1}
-                      py={4}
-                      sx={{ userSelect: 'none' }}>
+                      sx={{
+                        userSelect: 'none',
+                        opacity: 0.75,
+                      }}
+                      borderLeft={
+                        selectedColIndex === indexDay && elements.includes(indexHour) ? 4 : 0
+                      }
+                      borderColor={
+                        selectedColIndex === indexDay && elements.includes(indexHour)
+                          ? '#21ca2f'
+                          : 'secondary.main'
+                      }
+                      py={4}>
                       &nbsp;
                     </Box>
                   </div>

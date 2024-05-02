@@ -35,7 +35,10 @@ const MultipleSelectCheckmarks = ({ toogleCalendar }) => {
 
   return (
     <Box display={'flex'} alignItems={'center'}>
-      <CalendarMonthIcon sx={{ cursor: 'pointer', mr: 2, fontSize: '30px' }} onClick={toogleCalendar} />
+      <CalendarMonthIcon
+        sx={{ cursor: 'pointer', mr: 2, fontSize: '30px' }}
+        onClick={toogleCalendar}
+      />
       <FormControl sx={{ m: 1, width: 300 }}>
         <Select
           multiple
@@ -46,8 +49,23 @@ const MultipleSelectCheckmarks = ({ toogleCalendar }) => {
           MenuProps={MenuProps}>
           {panelList.map((panel) => (
             <MenuItem onClick={() => togglePanel(panel.type)} key={panel.type} value={panel.title}>
-              <Checkbox checked={panels.indexOf(panel.type) > -1} />
-              <ListItemText primary={panel.title} />
+              <Checkbox
+                sx={{
+                  color: '#151111',
+                  '&.Mui-checked': {
+                    color: '#151111',
+                  },
+                }}
+                checked={panels.indexOf(panel.type) > -1}
+              />
+              <ListItemText
+                primary={panel.title}
+                primaryTypographyProps={{
+                  sx: {
+                    color: '#151111',
+                  },
+                }}
+              />
             </MenuItem>
           ))}
         </Select>
@@ -55,13 +73,13 @@ const MultipleSelectCheckmarks = ({ toogleCalendar }) => {
     </Box>
   );
 };
-// openCalendar потом удалить, избавиться от перекидывания, а на прямую получать(ex zustand, context)
+
 export const Layout = ({ children, toogleCalendar, ...props }: LayoutProps) => {
   return (
     <Box
       sx={{ display: 'flex', flexDirection: 'column', maxWidth: 1440, margin: '0 auto' }}
       {...props}>
-      <StyledAppBar>
+      <StyledAppBar sx={{ bgcolor: 'grey' }}>
         <StyledToolbar>
           <Typography variant="h5" noWrap component="div" sx={{ flexGrow: 1, alignSelf: 'center' }}>
             Заметки

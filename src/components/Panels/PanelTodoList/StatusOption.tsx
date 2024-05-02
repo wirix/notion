@@ -3,6 +3,7 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import { blueGrey, indigo, red } from '@mui/material/colors';
 import { StatusTodoEnum } from '../../../store';
+import { Typography } from '@mui/material';
 
 export const StatusOption = ({
   status,
@@ -31,9 +32,15 @@ export const StatusOption = ({
             p: 0.5,
           },
         }}>
-        <MenuItem value={StatusTodoEnum.queue}>В очереди</MenuItem>
-        <MenuItem value={StatusTodoEnum.inProgress}>В процессе</MenuItem>
-        <MenuItem value={StatusTodoEnum.completed}>Выполнено</MenuItem>
+        <MenuItem value={StatusTodoEnum.queue}>
+          <Typography color={'#151111'}>В очереди</Typography>
+        </MenuItem>
+        <MenuItem value={StatusTodoEnum.inProgress}>
+          <Typography color={'#151111'}>В процессе</Typography>
+        </MenuItem>
+        <MenuItem value={StatusTodoEnum.completed}>
+          <Typography color={'#151111'}>Выполнено</Typography>
+        </MenuItem>
       </Select>
     </FormControl>
   );

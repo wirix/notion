@@ -1,9 +1,9 @@
-import { Box } from '@mui/material';
+import { Typography } from '@mui/material';
 
 export const NextTasks = ({ ...props }) => {
   return (
-    <Box {...props}>
-      <h3 style={{ fontWeight: '500' }}>Ближайшие задачи:</h3>
-    </Box>
+    <Typography variant="h5" fontWeight={500} {...props}>
+      Ближайшие задачи:
+    </Typography>
   );
 };
