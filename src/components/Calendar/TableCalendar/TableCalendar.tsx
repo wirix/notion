@@ -8,6 +8,7 @@ import { Button } from '../../Button';
 import { useSelectElements } from '../hooks';
 import { NextTasks } from '../NextTasks';
 import dayjs from 'dayjs';
+import { SelectedCell } from '.';
 
 const monthNames = [
   'Январь',
@@ -143,9 +144,10 @@ export const TableCalendar = () => {
           />
         </Box>
         <Box display={'grid'} gridTemplateColumns={`repeat(${DAYS_COUNT + 1}, 1fr)`} flexGrow={1}>
-          <Box></Box>
+          <Box width={138}></Box>
           {datesForWeek.map((date, index) => (
             <Box
+              width={138}
               textTransform={'capitalize'}
               key={index}
               display={'flex'}
@@ -196,7 +198,6 @@ export const TableCalendar = () => {
                 }}>
                 {new Array(HOURS_COUNT).fill(null).map((_, indexHour) => {
                   const isSelected = selectedColIndex === indexDay && elements.includes(indexHour);
-                  console.log('🚀 ~ {newArray ~ isSelected:', isSelected);
                   return (
                     <div
                       key={indexHour}
@@ -213,28 +214,16 @@ export const TableCalendar = () => {
                         borderLeft={isSelected ? 4 : 0}
                         borderColor={isSelected ? '#21ca2f' : 'secondary.main'}
                         py={4}>
-                        {todos.map((todo, index) => {
-                          const dateString = `2024-${datesForWeek[indexDay].month.index + 1}-${
-                            datesForWeek[indexDay].day.index
-                          }`;
-                          const nowTime = dayjs(dateString).set('hour', indexHour);
-                          if (
-                            (nowTime.isAfter(todo.date[0]) && nowTime.isBefore(todo.date[1])) ||
-                            nowTime.isSame(todo.date[0]) ||
-                            nowTime.isSame(todo.date[1])
-                          ) {
-                            return (
-                              <Box
-                                key={index}
-                                color={'white'}
-                                bgcolor={isSelected ? 'success.main' : 'primary.main'}>
-                                тут чето есть
-                              </Box>
-                            );
-                          } else {
-                            return <Fragment key={index}>&nbsp;</Fragment>;
-                          }
-                        })}
+                        {todos.map((todo, index) => (
+                          <SelectedCell
+                            key={index}
+                            todo={todo}
+                            dayIndex={indexDay}
+                            hour={indexHour}
+                            isSelected={isSelected}
+                            datesForWeek={datesForWeek}
+                          />
+                        ))}
                       </Box>
                     </div>
                   );

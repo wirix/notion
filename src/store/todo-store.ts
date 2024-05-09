@@ -34,7 +34,7 @@ export const useTodoStore = create<State & Actions>()(
         {
           id: '42a44fcb-48bc-471b-bb34-15b4351ab80d',
           text: 'Помыть посуду',
-          date: [dayjs('2024-05-05').set('hour', 10), dayjs('2024-05-05').set('hour', 13)],
+          date: [dayjs('2024-05-09').set('hour', 10), dayjs('2024-05-09').set('hour', 13)],
           status: StatusTodoEnum.inProgress,
         },
       ],
