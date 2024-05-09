@@ -1,5 +1,5 @@
-import { days } from '../../../store';
-import { useCallback, useState } from 'react';
+import { StatusTodoEnum, Todo, days, useTodoStore } from '../../../store';
+import { Fragment, useCallback, useMemo, useRef, useState } from 'react';
 import { ButtonIcon } from '../../ButtonIcon';
 import { Box, TextField, Typography } from '@mui/material';
 import { weekdays } from '../../Panels/PanelRoutine/TableRoutine';
@@ -7,6 +7,22 @@ import { Modal } from '../../Modal';
 import { Button } from '../../Button';
 import { useSelectElements } from '../hooks';
 import { NextTasks } from '../NextTasks';
+import dayjs from 'dayjs';
+
+const monthNames = [
+  'Январь',
+  'Февраль',
+  'Март',
+  'Апрель',
+  'Май',
+  'Июнь',
+  'Июль',
+  'Август',
+  'Сентябрь',
+  'Октябрь',
+  'Ноябрь',
+  'Декабрь',
+];
 
 const daysArray = Object.entries(days);
 const DAYS_COUNT = daysArray.length;
@@ -23,37 +39,22 @@ const hoursArray = Array.from({ length: 24 }, (_, index) => {
 export const TableCalendar = () => {
   const {
     functions: { handleMouseDown, handleMouseUp, handleMouseMove, setIsClick },
-    state: { elements, selectedColIndex, isClick },
+    state: { elements, selectedColIndex },
   } = useSelectElements();
-  console.log(elements, selectedColIndex);
+  const todos = useTodoStore((state) => state.todos);
+  const addTodo = useTodoStore((state) => state.addTodo);
 
   const [weekOffset, setWeekOffset] = useState(0);
   const [toggleModal, setToggleModal] = useState(false);
+  const [newTodo, setNewTodo] = useState<Todo>({
+    id: crypto.randomUUID(),
+    status: StatusTodoEnum.queue,
+    date: [dayjs(), dayjs()],
+    text: '',
+  });
+  console.log('🚀 ~ TableCalendar ~ newTodo:', newTodo);
 
-  const handleSetWeekOffset = (step: -1 | 1) => {
-    setWeekOffset(weekOffset + step);
-  };
-
-  const openModal = () => {
-    setIsClick(false);
-    if (elements.length) {
-      setToggleModal(true);
-    }
-  };
-
-  const createTask = () => {
-    // логика на доваление в zus данных
-    console.log(elements);
-    setToggleModal(false);
-    handleMouseUp();
-  };
-
-  const cancelTask = useCallback(() => {
-    setToggleModal(false);
-    handleMouseUp();
-  }, []);
-
-  const getDatesForWeek = (weekOffset: number) => {
+  const getDatesForWeek = useCallback((weekOffset: number) => {
     const currentDate = new Date();
     const currentDayOfWeek = currentDate.getDay() - 1;
     const weekdayTitles = Object.values(weekdays);
@@ -66,19 +67,61 @@ export const TableCalendar = () => {
       const day = new Date(firstDayOfWeek);
       day.setDate(firstDayOfWeek.getDate() + index);
       return {
-        day: day.getDate(),
-        dayName,
+        day: { index: day.getDate(), name: dayName },
+        month: { index: day.getMonth(), name: monthNames[day.getMonth()] },
       };
     });
 
     return datesForWeek;
+  }, []);
+  const datesForWeek = useMemo(() => getDatesForWeek(weekOffset), [weekOffset]);
+
+  const handleSetWeekOffset = (step: -1 | 1) => {
+    setWeekOffset(weekOffset + step);
   };
-  const datesForWeek = getDatesForWeek(weekOffset);
+
+  const handleMoveSelectedRows = (indexHour: number, indexDay: number) => {
+    handleMouseMove(indexHour, indexDay);
+
+    const dateString = `2024-${datesForWeek[indexDay].month.index + 1}-${
+      datesForWeek[indexDay].day.index
+    }`;
+    const minEl = elements.sort((a, b) => a - b)[0];
+    const maxEl = elements.sort((a, b) => a - b)[elements.length - 1];
+
+    setNewTodo({
+      ...newTodo,
+      date: [dayjs(dateString).set('hour', minEl), dayjs(dateString).set('hour', maxEl)],
+    });
+  };
+
+  const openModal = () => {
+    setIsClick(false);
+    if (elements.length) {
+      setToggleModal(true);
+    }
+  };
+
+  const createTask = () => {
+    addTodo(newTodo);
+    setToggleModal(false);
+    handleMouseUp();
+  };
+
+  const cancelTask = useCallback(() => {
+    setToggleModal(false);
+    handleMouseUp();
+  }, []);
 
   return (
     <Typography component={'div'} display={'flex'} color={'black'}>
       <Modal isOpen={toggleModal} onClose={cancelTask}>
-        <TextField sx={{ mb: 2 }} label="Задача" variant="outlined" />
+        <TextField
+          onChange={(e) => setNewTodo({ ...newTodo, text: e.target.value })}
+          sx={{ mb: 2 }}
+          label="Задача"
+          variant="outlined"
+        />
         <Button onClick={createTask}>Создать</Button>
       </Modal>
 
@@ -90,9 +133,14 @@ export const TableCalendar = () => {
         flexDirection={'column'}
         flexGrow={1}
         onMouseLeave={() => openModal()}>
-        <Box display={'flex'}>
-          <ButtonIcon onClick={() => handleSetWeekOffset(-1)} icon="trash" appearance="danger" />
-          <ButtonIcon onClick={() => handleSetWeekOffset(1)} icon="trash" appearance="danger" />
+        <Box display={'flex'} my={2}>
+          <ButtonIcon onClick={() => handleSetWeekOffset(-1)} icon="left" appearance="primary" />
+          <ButtonIcon
+            onClick={() => handleSetWeekOffset(1)}
+            icon="right"
+            appearance="primary"
+            style={{ marginLeft: '16px' }}
+          />
         </Box>
         <Box display={'grid'} gridTemplateColumns={`repeat(${DAYS_COUNT + 1}, 1fr)`} flexGrow={1}>
           <Box></Box>
@@ -105,9 +153,9 @@ export const TableCalendar = () => {
               justifyContent={'space-between'}
               height={'100%'}
               sx={{ userSelect: 'none' }}>
-              <Typography component={'div'}>{date.dayName}</Typography>
+              <Typography component={'div'}>{date.day.name}</Typography>
               <Typography component={'div'} fontSize={32}>
-                {date.day}
+                {date.day.index}
               </Typography>
             </Box>
           ))}
@@ -146,36 +194,51 @@ export const TableCalendar = () => {
                   cursor: 'row-resize',
                   borderColor: 'secondary.main',
                 }}>
-                {new Array(HOURS_COUNT).fill(null).map((_, indexHour) => (
-                  <div
-                    key={indexHour}
-                    onMouseMove={() => handleMouseMove(indexHour, indexDay)}
-                    onMouseDown={() => handleMouseDown(indexHour, indexDay)}
-                    onMouseUp={() => openModal()}>
-                    <Box
-                      bgcolor={
-                        selectedColIndex === indexDay && elements.includes(indexHour)
-                          ? 'success.main'
-                          : 'primary.main'
-                      }
-                      borderTop={1}
-                      sx={{
-                        userSelect: 'none',
-                        opacity: 0.75,
-                      }}
-                      borderLeft={
-                        selectedColIndex === indexDay && elements.includes(indexHour) ? 4 : 0
-                      }
-                      borderColor={
-                        selectedColIndex === indexDay && elements.includes(indexHour)
-                          ? '#21ca2f'
-                          : 'secondary.main'
-                      }
-                      py={4}>
-                      &nbsp;
-                    </Box>
-                  </div>
-                ))}
+                {new Array(HOURS_COUNT).fill(null).map((_, indexHour) => {
+                  const isSelected = selectedColIndex === indexDay && elements.includes(indexHour);
+                  console.log('🚀 ~ {newArray ~ isSelected:', isSelected);
+                  return (
+                    <div
+                      key={indexHour}
+                      onMouseMove={() => handleMoveSelectedRows(indexHour, indexDay)}
+                      onMouseDown={() => handleMouseDown(indexHour, indexDay)}
+                      onMouseUp={() => openModal()}>
+                      <Box
+                        bgcolor={isSelected ? 'success.main' : 'primary.main'}
+                        borderTop={1}
+                        sx={{
+                          userSelect: 'none',
+                          opacity: 0.75,
+                        }}
+                        borderLeft={isSelected ? 4 : 0}
+                        borderColor={isSelected ? '#21ca2f' : 'secondary.main'}
+                        py={4}>
+                        {todos.map((todo, index) => {
+                          const dateString = `2024-${datesForWeek[indexDay].month.index + 1}-${
+                            datesForWeek[indexDay].day.index
+                          }`;
+                          const nowTime = dayjs(dateString).set('hour', indexHour);
+                          if (
+                            (nowTime.isAfter(todo.date[0]) && nowTime.isBefore(todo.date[1])) ||
+                            nowTime.isSame(todo.date[0]) ||
+                            nowTime.isSame(todo.date[1])
+                          ) {
+                            return (
+                              <Box
+                                key={index}
+                                color={'white'}
+                                bgcolor={isSelected ? 'success.main' : 'primary.main'}>
+                                тут чето есть
+                              </Box>
+                            );
+                          } else {
+                            return <Fragment key={index}>&nbsp;</Fragment>;
+                          }
+                        })}
+                      </Box>
+                    </div>
+                  );
+                })}
               </Box>
             </Box>
           ))}

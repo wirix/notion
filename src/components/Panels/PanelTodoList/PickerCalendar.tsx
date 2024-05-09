@@ -1,6 +1,9 @@
-import { LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
+import { DateRange } from '@mui/x-date-pickers-pro/models';
+import { useState } from 'react';
+import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
+import { LocalizationProvider } from '@mui/x-date-pickers-pro';
+import { AdapterDayjs } from '@mui/x-date-pickers-pro/AdapterDayjs';
 import { StylesDatePicker } from '.';
 
 export const PickerCalendar = ({
@@ -9,23 +12,33 @@ export const PickerCalendar = ({
   updateStore,
   ...props
 }: {
-  date: Date;
+  date: DateRange<Dayjs>;
   id: string;
-  updateStore: (id: string, field: { date: Date }) => void;
+  updateStore: (id: string, date: DateRange<Dayjs>) => void;
 }) => {
+  const [value, setValue] = useState<DateRange<Dayjs>>([dayjs(date[0]), dayjs(date[1])]);
+
+  const onChangeDate = (newValue: DateRange<Dayjs>) => {
+    setValue(newValue);
+    updateStore(id, newValue);
+  };
+
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <StylesDatePicker
-        format="DD-MM-YYYY"
-        value={dayjs(date)}
-        onChange={(date) => {
-          if (date) {
-            // @ts-expect-error ts-migrate(2322) FIXME: Type 'Dayjs' is not assignable to type 'Date'.
-            updateStore(id, { date: date.$d });
-          }
-        }}
-        {...props}
-      />
+      <DemoContainer components={['DateRangePicker']}>
+        <DemoItem component="DateRangePicker">
+          <StylesDatePicker
+            value={value}
+            onChange={onChangeDate}
+            calendars={1}
+            formatDensity={undefined}
+            enableAccessibleFieldDOMStructure={undefined}
+            selectedSections={undefined}
+            onSelectedSectionsChange={undefined}
+            {...props}
+          />
+        </DemoItem>
+      </DemoContainer>
     </LocalizationProvider>
   );
 };

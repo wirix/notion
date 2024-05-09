@@ -3,10 +3,14 @@ import { Button } from '.';
 import { ButtonProps } from '@mui/material';
 import cn from 'classnames';
 import trash from '@mui/icons-material/RestoreFromTrash';
+import left from '@mui/icons-material/ArrowLeft';
+import right from '@mui/icons-material/ArrowRight';
 import { ReactNode } from 'react';
 
 const icons = {
   trash,
+  left,
+  right,
 };
 
 type Icons = keyof typeof icons;
@@ -14,10 +18,16 @@ type Icons = keyof typeof icons;
 interface ButtonIconProps extends ButtonProps {
   children?: ReactNode;
   icon: Icons;
-  appearance: 'success' | 'warning' | 'danger';
+  appearance: 'primary' | 'success' | 'warning' | 'danger';
 }
 
-export const ButtonIcon = ({ children, icon, appearance, ...props }: ButtonIconProps) => {
+export const ButtonIcon = ({
+  children,
+  icon,
+  appearance,
+  className,
+  ...props
+}: ButtonIconProps) => {
   const IconComp = icons[icon];
 
   return (
@@ -27,7 +37,10 @@ export const ButtonIcon = ({ children, icon, appearance, ...props }: ButtonIconP
           [red[600]]: appearance === 'danger',
           [orange[600]]: appearance === 'warning',
           [green[500]]: appearance === 'success',
+          ['#151111']: appearance === 'primary',
         }),
+        py: 1,
+        className,
       }}
       {...props}>
       <IconComp sx={{ fontSize: '25px' }} />

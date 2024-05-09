@@ -1,3 +1,5 @@
+import { DateRange } from '@mui/x-date-pickers-pro';
+import dayjs, { Dayjs } from 'dayjs';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
@@ -11,7 +13,7 @@ export enum StatusTodoEnum {
 export interface Todo {
   id: string;
   text: string;
-  date: Date;
+  date: DateRange<Dayjs>;
   status: StatusTodoEnum;
 }
 
@@ -30,9 +32,9 @@ export const useTodoStore = create<State & Actions>()(
     immer((set) => ({
       todos: [
         {
-          id: '2fea5f6b-183a-40aa-b9c5-abd893447ea2',
+          id: '42a44fcb-48bc-471b-bb34-15b4351ab80d',
           text: 'Помыть посуду',
-          date: new Date(),
+          date: [dayjs('2024-05-05').set('hour', 10), dayjs('2024-05-05').set('hour', 13)],
           status: StatusTodoEnum.inProgress,
         },
       ],

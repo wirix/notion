@@ -4,6 +4,8 @@ import { Box, Button, Checkbox, Grid } from '@mui/material';
 import { blueGrey } from '@mui/material/colors';
 import { Fragment, useCallback, useState } from 'react';
 import { PickerCalendar, StatusOption } from '.';
+import { DateRange } from '@mui/x-date-pickers-pro';
+import dayjs, { Dayjs } from 'dayjs';
 
 export const PanelTodoList = () => {
   const { todos, updateTodo, addTodo, deleteTodo } = useTodoStore();
@@ -14,7 +16,7 @@ export const PanelTodoList = () => {
     addTodo({
       id: crypto.randomUUID(),
       text: '',
-      date: new Date(),
+      date: [dayjs(), dayjs()],
       status: StatusTodoEnum.queue,
     });
   };
@@ -28,6 +30,10 @@ export const PanelTodoList = () => {
 
   const handleUpdateText = useCallback((id: string, text: string) => {
     updateTodo(id, { text });
+  }, []);
+
+  const handleUpdateDate = useCallback((id: string, date: DateRange<Dayjs>) => {
+    updateTodo(id, { date });
   }, []);
 
   return (
@@ -85,7 +91,7 @@ export const PanelTodoList = () => {
                   <StatusOption id={todo.id} updateStore={updateTodo} status={todo.status} />
                 </Box>
                 <Box p={0} px={1}>
-                  <PickerCalendar id={todo.id} updateStore={updateTodo} date={todo.date} />
+                  <PickerCalendar id={todo.id} updateStore={handleUpdateDate} date={todo.date} />
                 </Box>
               </Box>
             ))}
