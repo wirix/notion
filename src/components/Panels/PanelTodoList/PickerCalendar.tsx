@@ -1,7 +1,6 @@
 import dayjs, { Dayjs } from 'dayjs';
 import { DateRange } from '@mui/x-date-pickers-pro/models';
 import { useState } from 'react';
-import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
 import { LocalizationProvider } from '@mui/x-date-pickers-pro';
 import { AdapterDayjs } from '@mui/x-date-pickers-pro/AdapterDayjs';
 import { StylesDatePicker } from '.';
@@ -25,20 +24,18 @@ export const PickerCalendar = ({
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <DemoContainer components={['DateRangePicker']}>
-        <DemoItem component="DateRangePicker">
-          <StylesDatePicker
-            value={value}
-            onChange={onChangeDate}
-            calendars={1}
-            formatDensity={undefined}
-            enableAccessibleFieldDOMStructure={undefined}
-            selectedSections={undefined}
-            onSelectedSectionsChange={undefined}
-            {...props}
-          />
-        </DemoItem>
-      </DemoContainer>
+      <StylesDatePicker
+        format="DD.MM.YYYY"
+        disabled
+        value={value}
+        onChange={onChangeDate}
+        calendars={1}
+        formatDensity={undefined}
+        enableAccessibleFieldDOMStructure={undefined}
+        selectedSections={undefined}
+        onSelectedSectionsChange={undefined}
+        {...props}
+      />
     </LocalizationProvider>
   );
 };

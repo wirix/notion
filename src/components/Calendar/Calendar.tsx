@@ -1,5 +1,5 @@
 import { Box, BoxProps } from '@mui/material';
-import { Test } from './TableCalendar/Test';
+import { TableCalendar } from './TableCalendar/TableCalendar';
 
 interface CalendarProps extends BoxProps {
   isOpenCalendar: boolean;
@@ -22,7 +22,7 @@ export const Calendar = ({ isOpenCalendar, ...props }: CalendarProps) => {
         transition: 'top 0.5s ease',
       }}
       {...props}>
-      <Test />
+      <TableCalendar />
     </Box>
   );
 };

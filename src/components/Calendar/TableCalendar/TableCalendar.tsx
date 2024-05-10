@@ -1,14 +1,14 @@
 import { StatusTodoEnum, Todo, days, useTodoStore } from '../../../store';
-import { Fragment, useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { ButtonIcon } from '../../ButtonIcon';
 import { Box, TextField, Typography } from '@mui/material';
 import { weekdays } from '../../Panels/PanelRoutine/TableRoutine';
 import { Modal } from '../../Modal';
 import { Button } from '../../Button';
 import { useSelectElements } from '../hooks';
-import { NextTasks } from '../NextTasks';
 import dayjs from 'dayjs';
-import { SelectedCell } from '.';
+import { Days, Hours } from '.';
+import { Cell } from './Cell';
 
 const monthNames = [
   'Январь',
@@ -24,36 +24,22 @@ const monthNames = [
   'Ноябрь',
   'Декабрь',
 ];
-
 const daysArray = Object.entries(days);
 const DAYS_COUNT = daysArray.length;
 const HOURS_COUNT = 24;
-const hoursArray = Array.from({ length: 24 }, (_, index) => {
-  const hours = index % 12 || 12;
-  const ampm = index < 12 ? 'am' : 'pm';
-  const timeString = `${hours}:00 ${ampm}`;
-  const mls = index * 60 * 60 * 1000;
-
-  return { name: timeString, mls };
-});
 
 export const TableCalendar = () => {
   const {
-    functions: { handleMouseDown, handleMouseUp, handleMouseMove, setIsClick },
-    state: { elements, selectedColIndex },
+    functions: { handleMouseDown, handleMouseUp, handleMouseMove },
+    state: { elements, selectedColIndex, isClick },
   } = useSelectElements();
   const todos = useTodoStore((state) => state.todos);
   const addTodo = useTodoStore((state) => state.addTodo);
 
   const [weekOffset, setWeekOffset] = useState(0);
-  const [toggleModal, setToggleModal] = useState(false);
-  const [newTodo, setNewTodo] = useState<Todo>({
-    id: crypto.randomUUID(),
-    status: StatusTodoEnum.queue,
-    date: [dayjs(), dayjs()],
-    text: '',
-  });
-  console.log('🚀 ~ TableCalendar ~ newTodo:', newTodo);
+  const handleSetWeekOffset = (step: -1 | 1) => {
+    setWeekOffset(weekOffset + step);
+  };
 
   const getDatesForWeek = useCallback((weekOffset: number) => {
     const currentDate = new Date();
@@ -77,63 +63,76 @@ export const TableCalendar = () => {
   }, []);
   const datesForWeek = useMemo(() => getDatesForWeek(weekOffset), [weekOffset]);
 
-  const handleSetWeekOffset = (step: -1 | 1) => {
-    setWeekOffset(weekOffset + step);
-  };
+  const [newTask, setNewTask] = useState<Todo>({
+    id: crypto.randomUUID(),
+    status: StatusTodoEnum.queue,
+    date: [dayjs(), dayjs()],
+    text: '',
+  });
+  console.log('🚀 ~ Test ~ newTask:', newTask);
+  const [toggleModal, setToggleModal] = useState(false);
 
-  const handleMoveSelectedRows = (indexHour: number, indexDay: number) => {
-    handleMouseMove(indexHour, indexDay);
-
-    const dateString = `2024-${datesForWeek[indexDay].month.index + 1}-${
-      datesForWeek[indexDay].day.index
-    }`;
-    const minEl = elements.sort((a, b) => a - b)[0];
-    const maxEl = elements.sort((a, b) => a - b)[elements.length - 1];
-
-    setNewTodo({
-      ...newTodo,
-      date: [dayjs(dateString).set('hour', minEl), dayjs(dateString).set('hour', maxEl)],
-    });
-  };
-
-  const openModal = () => {
-    setIsClick(false);
+  const mouseUp = () => {
+    handleMouseUp();
     if (elements.length) {
       setToggleModal(true);
     }
   };
 
-  const createTask = () => {
-    addTodo(newTodo);
+  const onMouseMove = useCallback(
+    (indexHour: number) => {
+      if (!isClick) {
+        return;
+      }
+      handleMouseMove(indexHour, selectedColIndex!);
+      console.log('82373');
+      const dateString = `2024-${datesForWeek[selectedColIndex!].month.index + 1}-${
+        datesForWeek[selectedColIndex!].day.index
+      }`;
+      const minEl = elements.sort((a, b) => a - b)[0];
+      const maxEl = elements.sort((a, b) => a - b)[elements.length - 1];
+
+      setNewTask({
+        ...newTask,
+        date: [dayjs(dateString).set('hour', minEl), dayjs(dateString).set('hour', maxEl)],
+      });
+    },
+    [elements],
+  );
+
+  const createNewTask = () => {
+    console.log(newTask);
+    addTodo(newTask);
     setToggleModal(false);
-    handleMouseUp();
+    setNewTask({
+      id: crypto.randomUUID(),
+      status: StatusTodoEnum.queue,
+      date: [dayjs(), dayjs()],
+      text: '',
+    });
   };
 
-  const cancelTask = useCallback(() => {
-    setToggleModal(false);
-    handleMouseUp();
-  }, []);
-
   return (
-    <Typography component={'div'} display={'flex'} color={'black'}>
-      <Modal isOpen={toggleModal} onClose={cancelTask}>
+    <Typography
+      sx={{ userSelect: 'none' }}
+      height={'calc(100vh - 90px)'}
+      component={'div'}
+      display={'grid'}
+      gridTemplateColumns={'280px 1fr 7fr'}
+      gridTemplateRows={'70px 1fr'}
+      gap={0}
+      color={'whitegrey'}>
+      <Modal isOpen={toggleModal} onClose={() => setToggleModal(false)}>
         <TextField
-          onChange={(e) => setNewTodo({ ...newTodo, text: e.target.value })}
+          onChange={(e) => setNewTask({ ...newTask, text: e.target.value })}
           sx={{ mb: 2 }}
           label="Задача"
           variant="outlined"
         />
-        <Button onClick={createTask}>Создать</Button>
+        <Button onClick={createNewTask}>Создать</Button>
       </Modal>
-
-      <NextTasks width={'300px'} mr={1} />
-
-      <Box
-        height={'calc(100vh - 90px)'}
-        display={'flex'}
-        flexDirection={'column'}
-        flexGrow={1}
-        onMouseLeave={() => openModal()}>
+      <Box gridArea={'1 / 1 / 6 / 2'} pr={1}>
+        Ближайшее задание
         <Box display={'flex'} my={2}>
           <ButtonIcon onClick={() => handleSetWeekOffset(-1)} icon="left" appearance="primary" />
           <ButtonIcon
@@ -143,95 +142,51 @@ export const TableCalendar = () => {
             style={{ marginLeft: '16px' }}
           />
         </Box>
-        <Box display={'grid'} gridTemplateColumns={`repeat(${DAYS_COUNT + 1}, 1fr)`} flexGrow={1}>
-          <Box width={138}></Box>
-          {datesForWeek.map((date, index) => (
-            <Box
-              width={138}
-              textTransform={'capitalize'}
-              key={index}
-              display={'flex'}
-              flexDirection={'column'}
-              justifyContent={'space-between'}
-              height={'100%'}
-              sx={{ userSelect: 'none' }}>
-              <Typography component={'div'}>{date.day.name}</Typography>
-              <Typography component={'div'} fontSize={32}>
-                {date.day.index}
-              </Typography>
-            </Box>
-          ))}
-        </Box>
-        <Box
-          display={'grid'}
-          overflow={'auto'}
-          gridTemplateColumns={`repeat(${DAYS_COUNT + 1}, 1fr)`}
-          flexGrow={1}>
-          <Box display={'flex'} flexDirection={'column'}>
-            {hoursArray.map((hour, index) => (
-              <Typography
-                key={index}
-                display={'flex'}
-                flexDirection={'column'}
-                justifyContent={'space-between'}
-                textTransform={'uppercase'}
-                py={4}
-                sx={{ userSelect: 'none' }}>
-                {hour.name}
-              </Typography>
-            ))}
+      </Box>
+      <Days datesForWeek={datesForWeek} gridArea={'1 / 2 / 2 / 6'} display={'flex'} />
+      <Box gridArea={'2 / 2 / 3 / 4'} display={'flex'} overflow={'auto'}>
+        <Hours />
+        {datesForWeek.map((_, indexCol) => (
+          <Box height={80} flexGrow={1} key={indexCol}>
+            {new Array(HOURS_COUNT).fill(null).map((_, indexHour) => {
+              const dateString = `2024-${datesForWeek[indexCol].month.index + 1}-${
+                datesForWeek[indexCol].day.index
+              }`;
+              const nowTime = dayjs(dateString).set('hour', indexHour);
+              const findTask = todos.find(
+                (todo) =>
+                  nowTime.isSame(todo.date[0]) ||
+                  nowTime.isSame(todo.date[1]) ||
+                  (nowTime.isAfter(todo.date[0]) && nowTime.isBefore(todo.date[1])),
+              );
+
+              const status = nowTime.isSame(findTask?.date[0])
+                ? 'start'
+                : nowTime.isSame(findTask?.date[1])
+                ? 'end'
+                : findTask
+                ? 'middle'
+                : 'none';
+              const isSelected = selectedColIndex === indexCol && elements.includes(indexHour);
+
+              return (
+                <Cell
+                  key={`${indexHour} + ${indexCol}`}
+                  datesForWeek={datesForWeek}
+                  task={findTask}
+                  status={status}
+                  isSelected={isSelected}
+                  nowTime={nowTime}
+                  height={80}
+                  width={141}
+                  onMouseDown={() => handleMouseDown(indexHour, indexCol)}
+                  onMouseMove={() => onMouseMove(indexHour)}
+                  onMouseUp={() => mouseUp()}
+                />
+              );
+            })}
           </Box>
-          {daysArray.map((_, indexDay) => (
-            <Box
-              display={'flex'}
-              key={indexDay}
-              flexDirection={'column'}
-              justifyContent={'space-between'}
-              height={'100%'}>
-              <Box
-                display={'flex'}
-                flexDirection={'column'}
-                borderLeft={1}
-                sx={{
-                  cursor: 'row-resize',
-                  borderColor: 'secondary.main',
-                }}>
-                {new Array(HOURS_COUNT).fill(null).map((_, indexHour) => {
-                  const isSelected = selectedColIndex === indexDay && elements.includes(indexHour);
-                  return (
-                    <div
-                      key={indexHour}
-                      onMouseMove={() => handleMoveSelectedRows(indexHour, indexDay)}
-                      onMouseDown={() => handleMouseDown(indexHour, indexDay)}
-                      onMouseUp={() => openModal()}>
-                      <Box
-                        bgcolor={isSelected ? 'success.main' : 'primary.main'}
-                        borderTop={1}
-                        sx={{
-                          userSelect: 'none',
-                          opacity: 0.75,
-                        }}
-                        borderLeft={isSelected ? 4 : 0}
-                        borderColor={isSelected ? '#21ca2f' : 'secondary.main'}
-                        py={4}>
-                        {todos.map((todo, index) => (
-                          <SelectedCell
-                            key={index}
-                            todo={todo}
-                            dayIndex={indexDay}
-                            hour={indexHour}
-                            isSelected={isSelected}
-                            datesForWeek={datesForWeek}
-                          />
-                        ))}
-                      </Box>
-                    </div>
-                  );
-                })}
-              </Box>
-            </Box>
-          ))}
-        </Box>
+        ))}
       </Box>
     </Typography>
   );
