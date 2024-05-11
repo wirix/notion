@@ -1,13 +1,12 @@
 import { StatusTodoEnum, Todo, days, useTodoStore } from '../../../store';
 import { useCallback, useMemo, useState } from 'react';
-import { ButtonIcon } from '../../ButtonIcon';
 import { Box, TextField, Typography } from '@mui/material';
 import { weekdays } from '../../Panels/PanelRoutine/TableRoutine';
 import { Modal } from '../../Modal';
 import { Button } from '../../Button';
 import { useSelectElements } from '../hooks';
 import dayjs from 'dayjs';
-import { Days, Hours } from '.';
+import { Days, Hours, NextTasks } from '.';
 import { Cell } from './Cell';
 
 const monthNames = [
@@ -69,7 +68,6 @@ export const TableCalendar = () => {
     date: [dayjs(), dayjs()],
     text: '',
   });
-  console.log('🚀 ~ Test ~ newTask:', newTask);
   const [toggleModal, setToggleModal] = useState(false);
 
   const mouseUp = () => {
@@ -85,7 +83,6 @@ export const TableCalendar = () => {
         return;
       }
       handleMouseMove(indexHour, selectedColIndex!);
-      console.log('82373');
       const dateString = `2024-${datesForWeek[selectedColIndex!].month.index + 1}-${
         datesForWeek[selectedColIndex!].day.index
       }`;
@@ -101,7 +98,6 @@ export const TableCalendar = () => {
   );
 
   const createNewTask = () => {
-    console.log(newTask);
     addTodo(newTask);
     setToggleModal(false);
     setNewTask({
@@ -111,7 +107,7 @@ export const TableCalendar = () => {
       text: '',
     });
   };
-
+  console.log(elements);
   return (
     <Typography
       sx={{ userSelect: 'none' }}
@@ -131,23 +127,19 @@ export const TableCalendar = () => {
         />
         <Button onClick={createNewTask}>Создать</Button>
       </Modal>
-      <Box gridArea={'1 / 1 / 6 / 2'} pr={1}>
-        Ближайшее задание
-        <Box display={'flex'} my={2}>
-          <ButtonIcon onClick={() => handleSetWeekOffset(-1)} icon="left" appearance="primary" />
-          <ButtonIcon
-            onClick={() => handleSetWeekOffset(1)}
-            icon="right"
-            appearance="primary"
-            style={{ marginLeft: '16px' }}
-          />
-        </Box>
-      </Box>
+      <NextTasks
+        component="div"
+        gridArea={'1 / 1 / 6 / 2'}
+        pr={1}
+        todos={todos}
+        handleSetWeekOffset={handleSetWeekOffset}
+        datesForWeek={datesForWeek}
+      />
       <Days datesForWeek={datesForWeek} gridArea={'1 / 2 / 2 / 6'} display={'flex'} />
       <Box gridArea={'2 / 2 / 3 / 4'} display={'flex'} overflow={'auto'}>
         <Hours />
         {datesForWeek.map((_, indexCol) => (
-          <Box height={80} flexGrow={1} key={indexCol}>
+          <Box height={100} flexGrow={1} key={indexCol}>
             {new Array(HOURS_COUNT).fill(null).map((_, indexHour) => {
               const dateString = `2024-${datesForWeek[indexCol].month.index + 1}-${
                 datesForWeek[indexCol].day.index
@@ -177,11 +169,11 @@ export const TableCalendar = () => {
                   status={status}
                   isSelected={isSelected}
                   nowTime={nowTime}
-                  height={80}
+                  height={100}
                   width={141}
-                  onMouseDown={() => handleMouseDown(indexHour, indexCol)}
-                  onMouseMove={() => onMouseMove(indexHour)}
-                  onMouseUp={() => mouseUp()}
+                  onMouseDown={() => status === 'none' && handleMouseDown(indexHour, indexCol)}
+                  onMouseMove={() => status === 'none' && onMouseMove(indexHour)}
+                  onMouseUp={() => status === 'none' && mouseUp()}
                 />
               );
             })}
