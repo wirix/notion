@@ -1,7 +1,8 @@
-import { Box, styled } from '@mui/material';
-import { Dayjs } from 'dayjs';
+import { Box, Typography, styled } from '@mui/material';
+import dayjs, { Dayjs } from 'dayjs';
 import { ComponentProps } from 'react';
 import { Todo } from '../../../store';
+import { truncateString } from '../../../utils';
 
 interface SelectedElProps extends ComponentProps<typeof Box> {
   task?: Todo;
@@ -24,16 +25,14 @@ export const Cell = ({
   if (!task) {
     return (
       <Box
-        bgcolor={isSelected ? 'blue' : 'primary.main'}
-        color={'greywhite'}
-        height={80}
+        p={1}
+        bgcolor={isSelected ? 'lime' : 'grey'}
+        borderColor={'greywhite'}
+        color={'black'}
         borderLeft={nowTime.day() === 1 ? 1 : 0}
         borderRight={1}
         borderTop={nowTime.format('HH') === '00' ? 1 : 0}
         borderBottom={1}
-        sx={{
-          cursor: 'row-resize',
-        }}
         {...props}>
         &nbsp;
       </Box>
@@ -44,8 +43,9 @@ export const Cell = ({
     case 'start':
       return (
         <Box
-          color={'greywhite'}
-          height={80}
+          p={1}
+          color={'black'}
+          borderColor={'greywhite'}
           bgcolor={task.color}
           borderLeft={nowTime.day() === 1 ? 1 : 0}
           borderTop={nowTime.format('HH') === '00' ? 1 : 0}
@@ -57,15 +57,27 @@ export const Cell = ({
             wordBreak: 'break-all',
           }}
           {...props}>
-          {task.text}
+          <Typography component={'div'} color={'black'} fontSize={20} fontWeight={500}>
+            {truncateString(task.text, 20)}
+          </Typography>
+          <Typography component={'span'} color={'black'} fontSize={16} fontWeight={400}>
+            {dayjs(task.date[0]).hour().toLocaleString('ru-RU', { minimumIntegerDigits: 2 })}:
+            {dayjs(task.date[0]).minute().toLocaleString('ru-RU', { minimumIntegerDigits: 2 })}
+          </Typography>{' '}
+          -{' '}
+          <Typography component={'span'} color={'black'} fontSize={16} fontWeight={400}>
+            {dayjs(task.date[1]).hour().toLocaleString('ru-RU', { minimumIntegerDigits: 2 })}:
+            {dayjs(task.date[1]).minute().toLocaleString('ru-RU', { minimumIntegerDigits: 2 })}
+          </Typography>
         </Box>
       );
     case 'end':
       return (
         <Box
+          p={1}
           bgcolor={task.color}
-          color={'greywhite'}
-          height={80}
+          borderColor={'greywhite'}
+          color={'black'}
           borderBottom={1}
           borderLeft={nowTime.day() === 1 ? 1 : 0}
           borderTop={nowTime.format('HH') === '00' ? 1 : 0}
@@ -80,9 +92,10 @@ export const Cell = ({
     case 'middle':
       return (
         <Box
+          p={1}
           bgcolor={task.color}
-          color={'greywhite'}
-          height={80}
+          color={'black'}
+          borderColor={'greywhite'}
           borderLeft={nowTime.day() === 1 ? 1 : 0}
           borderTop={nowTime.format('HH') === '00' ? 1 : 0}
           borderRight={1}
@@ -92,8 +105,9 @@ export const Cell = ({
     case 'none':
       return (
         <Box
-          color={'greywhite'}
-          height={80}
+          p={1}
+          borderColor={'greywhite'}
+          color={'black'}
           borderLeft={nowTime.day() === 1 ? 1 : 0}
           borderRight={1}
           borderTop={nowTime.format('HH') === '00' ? 1 : 0}

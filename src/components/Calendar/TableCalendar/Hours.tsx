@@ -11,15 +11,18 @@ export const Hours = ({ ...props }) => {
   });
 
   return (
-    <Box {...props}>
+    <Box borderTop={1} {...props}>
       {hours.map((hour) => (
         <Box
           key={hour.mls}
           width={141}
-          height={80}
+          height={100}
           display={'flex'}
-          justifyContent={'center'}
-          alignItems={'center'}>
+          justifyContent={'right'}
+          pr={2}
+          borderBottom={1}
+          fontSize={20}
+          textTransform={'uppercase'}>
           {hour.name}
         </Box>
       ))}
