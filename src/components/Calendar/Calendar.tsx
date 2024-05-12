@@ -1,5 +1,5 @@
 import { Box, BoxProps } from '@mui/material';
-import { TableCalendar } from './TableCalendar';
+import { TableCalendar } from './TableCalendar/TableCalendar';
 
 interface CalendarProps extends BoxProps {
   isOpenCalendar: boolean;

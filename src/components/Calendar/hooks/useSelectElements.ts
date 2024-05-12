@@ -22,14 +22,23 @@ export const useSelectElements = () => {
 
   const handleMouseMove = useCallback(
     (cell: number, newColIndex: number) => {
-      if (!isMouseDown || selectedCells.includes(cell) || colIndex.current !== newColIndex) return;
+      if (!isMouseDown || selectedCells.includes(cell)) return;
       setSelectedCells((elements) => [...elements, cell]);
     },
     [isMouseDown, selectedCells],
   );
 
+  const handleSetIsMouseDown = useCallback((newIsMouseDown: boolean) => {
+    setIsMouseDown(newIsMouseDown);
+  }, []);
+
   return {
-    functions: { handleMouseDown, handleMouseUp, handleMouseMove },
+    functions: {
+      handleMouseDown,
+      handleMouseUp,
+      handleMouseMove,
+      setIsClick: handleSetIsMouseDown,
+    },
     state: { elements: selectedCells, isClick: isMouseDown, selectedColIndex: colIndex.current },
   };
 };

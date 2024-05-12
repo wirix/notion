@@ -47,7 +47,9 @@ export const EditableText = ({
           onChange={(e) => setText(e.target.value)}
         />
       ) : (
-        <Typography style={{ wordWrap: 'break-word', width: '300px' }} onClick={editOpen}>
+        <Typography
+          style={{ wordWrap: 'break-word', width: '300px', color: '#151111' }}
+          onClick={editOpen}>
           {text.length ? text : 'Пусто'}
         </Typography>
       )}

@@ -11,12 +11,14 @@ interface PanelPanels extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, 
 export const Panel = ({ children, type, width, ...props }: PanelPanels) => {
   return (
     <Draggable panel={type} width={width}>
-      <ResizeTag panel={type} width={width -24}>
+      <ResizeTag panel={type} width={width - 24}>
         <Card
           panel={type}
           style={{
             position: 'relative',
             backgroundColor: '#fff',
+            maxHeight: 500,
+            overflowY: 'auto',
           }}
           {...props}>
           {children}
