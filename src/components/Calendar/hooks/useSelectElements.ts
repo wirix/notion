@@ -21,7 +21,7 @@ export const useSelectElements = () => {
   }, []);
 
   const handleMouseMove = useCallback(
-    (cell: number, newColIndex: number) => {
+    (cell: number) => {
       if (!isMouseDown || selectedCells.includes(cell)) return;
       setSelectedCells((elements) => [...elements, cell]);
     },

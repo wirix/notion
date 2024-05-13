@@ -1,5 +1,5 @@
 import { StatusTodoEnum, Todo, days, useTodoStore } from '../../../store';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { Box, TextField, Typography } from '@mui/material';
 import { weekdays } from '../../Panels/PanelRoutine/TableRoutine';
 import { Modal } from '../../Modal';
@@ -8,6 +8,7 @@ import { useSelectElements } from '../hooks';
 import dayjs from 'dayjs';
 import { Days, Hours, NextTasks } from '.';
 import { Cell } from './Cell';
+import useModalPosition from '../../../hooks/useModalPosition';
 
 const monthNames = [
   'Январь',
@@ -35,6 +36,11 @@ export const TableCalendar = () => {
   const todos = useTodoStore((state) => state.todos);
   const addTodo = useTodoStore((state) => state.addTodo);
 
+
+  const ref = useRef<HTMLElement | null>(null);
+  const modalPosition = useModalPosition(ref, 200, 200);
+
+  
   const [weekOffset, setWeekOffset] = useState(0);
   const handleSetWeekOffset = (step: -1 | 1) => {
     setWeekOffset(weekOffset + step);
@@ -82,7 +88,7 @@ export const TableCalendar = () => {
       if (!isClick) {
         return;
       }
-      handleMouseMove(indexHour, selectedColIndex!);
+      handleMouseMove(indexHour);
       const dateString = `2024-${datesForWeek[selectedColIndex!].month.index + 1}-${
         datesForWeek[selectedColIndex!].day.index
       }`;
@@ -107,7 +113,7 @@ export const TableCalendar = () => {
       text: '',
     });
   };
-  console.log(elements);
+
   return (
     <Typography
       sx={{ userSelect: 'none' }}

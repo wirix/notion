@@ -1,6 +1,6 @@
-import { Box, Typography, styled } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import dayjs, { Dayjs } from 'dayjs';
-import { ComponentProps } from 'react';
+import { ComponentProps, HTMLAttributes, forwardRef } from 'react';
 import { Todo } from '../../../store';
 import { truncateString } from '../../../utils';
 
@@ -13,6 +13,21 @@ interface SelectedElProps extends ComponentProps<typeof Box> {
 }
 
 export type CellWithTaskStatus = 'start' | 'end' | 'middle' | 'none';
+
+const Modal1 = forwardRef<HTMLElement, HTMLAttributes<HTMLElement>>(({ ...props }, ref) => {
+  return (
+    <Box
+      color={'white'}
+      width={200}
+      height={200}
+      position={'absolute'}
+      right={0}
+      top={0}
+      {...props}>
+      MODAL11111111111111111111111111111
+    </Box>
+  );
+});
 
 export const Cell = ({
   task,
