@@ -1,18 +1,21 @@
 import { Box, TextareaAutosize, Typography } from '@mui/material';
-import { useRef, useState } from 'react';
+import { ComponentProps, useRef, useState } from 'react';
 import { useOutsideClick } from '../hooks';
+
+interface EditableTextProps extends ComponentProps<typeof Box> {
+  children: string;
+  id: string;
+  updateText: (id: string, text: string) => void;
+  width?: number;
+}
 
 export const EditableText = ({
   children,
   id,
   updateText,
   width = 180,
-}: {
-  children: string;
-  id: string;
-  updateText: (id: string, text: string) => void;
-  width?: number;
-}) => {
+  ...props
+}: EditableTextProps) => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [text, setText] = useState(children);
   const elementRef = useRef(null);
@@ -29,12 +32,12 @@ export const EditableText = ({
     setIsEditMode(true);
   };
 
-  return (
-    <Box position={'relative'} width={width}>
-      {isEditMode ? (
+  if (isEditMode) {
+    return (
+      <Box position={'relative'} width={width} {...props}>
         <TextareaAutosize
           style={{
-            width: '300px',
+            width: `${width}px`,
             padding: 4,
             outline: 0,
             borderRadius: 4,
@@ -46,13 +49,17 @@ export const EditableText = ({
           autoFocus
           onChange={(e) => setText(e.target.value)}
         />
-      ) : (
+      </Box>
+    );
+  } else {
+    return (
+      <Box position={'relative'} width={width} {...props}>
         <Typography
-          style={{ wordWrap: 'break-word', width: '300px', color: '#151111' }}
+          style={{ wordWrap: 'break-word', width: `${width}px`, color: '#151111' }}
           onClick={editOpen}>
           {text.length ? text : 'Пусто'}
         </Typography>
-      )}
-    </Box>
-  );
+      </Box>
+    );
+  }
 };

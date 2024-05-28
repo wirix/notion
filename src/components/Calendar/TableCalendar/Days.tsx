@@ -1,6 +1,8 @@
 import { Box, Typography } from '@mui/material';
+import dayjs from 'dayjs';
 
 export const Days = ({ datesForWeek, ...props }) => {
+  const nowTime = dayjs().date();
   return (
     <Box {...props}>
       <Box width={141}></Box>
@@ -14,8 +16,13 @@ export const Days = ({ datesForWeek, ...props }) => {
           justifyContent={'space-between'}
           height={'100%'}
           sx={{ userSelect: 'none' }}>
-          <Typography component={'div'}>{date.day.name}</Typography>
-          <Typography component={'div'} fontSize={32}>
+          <Typography component={'div'} color={nowTime === date.day.index ? 'aqua' : 'inherit'}>
+            {date.day.name}
+          </Typography>
+          <Typography
+            component={'div'}
+            fontSize={32}
+            color={nowTime === date.day.index ? 'aqua' : 'inherit'}>
             {date.day.index}
           </Typography>
         </Box>

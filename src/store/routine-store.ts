@@ -26,6 +26,7 @@ type Actions = {
   addTask: () => void;
   updateText: (id: string, text: string) => void;
   toggleTask: (id: string, day: Day) => void;
+  deleteTask: (id: string) => void;
 };
 
 type State = {
@@ -96,6 +97,10 @@ export const useRoutineStore = create<State & Actions>()(
           });
         });
       },
+      deleteTask: (id) =>
+        set((store) => ({
+          tasks: store.tasks.filter((task) => task.id !== id),
+        })),
     })),
 
     {

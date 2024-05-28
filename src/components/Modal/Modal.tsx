@@ -25,7 +25,8 @@ interface FadeProps {
 interface ModalProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   children: ReactNode;
   isOpen: boolean;
-  onClose: () => void;
+  onClose?: () => void;
+  styled?: Record<string, any>;
 }
 
 const Fade = forwardRef<HTMLDivElement, FadeProps>(function Fade(props, ref) {
@@ -52,7 +53,7 @@ const Fade = forwardRef<HTMLDivElement, FadeProps>(function Fade(props, ref) {
   );
 });
 
-export const Modal = ({ children, isOpen, onClose, ...props }: ModalProps) => {
+export const Modal = ({ children, isOpen, onClose, styled, ...props }: ModalProps) => {
   const [open, setOpen] = useState(isOpen);
 
   useEffect(() => {
@@ -60,7 +61,11 @@ export const Modal = ({ children, isOpen, onClose, ...props }: ModalProps) => {
   }, [isOpen]);
 
   return (
-    <div {...props}>
+    <div
+      onClick={(e) => {
+        e.stopPropagation();
+      }}
+      {...props}>
       <ModalWindow
         open={open}
         onClose={onClose}
@@ -72,9 +77,7 @@ export const Modal = ({ children, isOpen, onClose, ...props }: ModalProps) => {
           },
         }}>
         <Fade in={open}>
-          <Box sx={StyledModal}>
-            <Box>{children}</Box>
-          </Box>
+          <Box sx={styled ?? StyledModal}>{children}</Box>
         </Fade>
       </ModalWindow>
     </div>

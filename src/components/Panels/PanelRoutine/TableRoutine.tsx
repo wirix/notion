@@ -5,11 +5,12 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { Button, Checkbox } from '@mui/material';
-import { Task, Day } from '../../../store/routine-store';
+import { Button, Checkbox, Typography } from '@mui/material';
+import { Task, Day, useRoutineStore } from '../../../store/routine-store';
 import AddIcon from '@mui/icons-material/Add';
-import { EditableText } from '../..';
+import { ButtonIcon, EditableText } from '../..';
 import { StylesTableCell } from '.';
+import { useState } from 'react';
 
 interface TableRoutineProps {
   tasks: Task[];
@@ -29,12 +30,32 @@ export const weekdays: Record<Day, string> = {
 };
 
 export const TableRoutine = ({ tasks, toggleTask, addTask, updateText }: TableRoutineProps) => {
+  const [choiceIds, setChoiceIds] = useState<string[]>([]);
+  const { deleteTask } = useRoutineStore();
+
+  const handleDeleteTodo = () => {
+    choiceIds.forEach((id) => {
+      console.log(id);
+      deleteTask(id);
+    });
+    setChoiceIds([]);
+  };
+
   return (
     <TableContainer component={Paper}>
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell>Рутина</TableCell>
+            <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
+              <Typography component={'div'} color="#151111" fontSize={18} fontWeight={500} mr={1}>
+                Рутина
+              </Typography>
+              <ButtonIcon
+                disabled={choiceIds.length === 0}
+                icon={'trash'}
+                appearance={'danger'}
+                onClick={handleDeleteTodo}></ButtonIcon>
+            </TableCell>
             {Object.values(weekdays).map((day) => (
               <StylesTableCell width={'40px'} padding={'none'} key={day} align="center">
                 {day}
@@ -45,7 +66,20 @@ export const TableRoutine = ({ tasks, toggleTask, addTask, updateText }: TableRo
         <TableBody>
           {tasks.map((task) => (
             <TableRow key={task.id}>
-              <StylesTableCell component="th" scope="row">
+              <StylesTableCell
+                component="th"
+                scope="row"
+                sx={{ display: 'flex', alignItems: 'center' }}>
+                <Checkbox
+                  checked={choiceIds.includes(task.id)}
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      setChoiceIds([...choiceIds, task.id]);
+                    } else {
+                      setChoiceIds(choiceIds.filter((id) => id !== task.id));
+                    }
+                  }}
+                />
                 <EditableText id={task.id} updateText={updateText}>
                   {task.text}
                 </EditableText>
