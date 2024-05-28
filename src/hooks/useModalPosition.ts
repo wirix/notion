@@ -1,8 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
-const useModalPosition = (ref, modalWidth, modalHeight) => {
-  console.log("🚀 ~ useModalPosition ~ ref:", ref)
+export const useModalPosition = (modalWidth: number, modalHeight: number) => {
   const [position, setPosition] = useState({ x: 0, y: 0 });
+
+  const [_, setNode] = useState<HTMLElement | null>(null);
+
+  const ref = useCallback((nodeEle) => {
+    setNode(nodeEle);
+  }, []);
 
   useEffect(() => {
     const handleClick = (e) => {
@@ -11,12 +16,19 @@ const useModalPosition = (ref, modalWidth, modalHeight) => {
       let x = clientX;
       let y = clientY;
 
-      if (x + modalWidth > window.innerWidth) {
-        x = window.innerWidth - modalWidth;
+      if (clientX + modalWidth > window.innerWidth) {
+        x = clientX - modalWidth;
       }
 
-      if (y + modalHeight > window.innerHeight) {
-        y = window.innerHeight - modalHeight;
+      if (clientY + modalHeight > window.innerHeight) {
+        y = clientY - modalHeight;
+      }
+
+      if (x < 0) {
+        x = 0;
+      }
+      if (y < 0) {
+        y = 0;
       }
 
       setPosition({ x, y });
@@ -29,7 +41,5 @@ const useModalPosition = (ref, modalWidth, modalHeight) => {
     };
   }, [ref, modalWidth, modalHeight]);
 
-  return position;
+  return { position, ref };
 };
-
-export default useModalPosition;

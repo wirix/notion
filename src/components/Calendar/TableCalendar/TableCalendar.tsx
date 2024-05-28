@@ -1,14 +1,17 @@
-import { StatusTodoEnum, Todo, days, useTodoStore } from '../../../store';
-import { useCallback, useMemo, useRef, useState } from 'react';
-import { Box, TextField, Typography } from '@mui/material';
+import { Todo, days, useTodoStore } from '../../../store';
+import { ReactNode, useCallback, useMemo, useState } from 'react';
+import { Box, TextField, Typography, lighten } from '@mui/material';
 import { weekdays } from '../../Panels/PanelRoutine/TableRoutine';
 import { Modal } from '../../Modal';
 import { Button } from '../../Button';
 import { useSelectElements } from '../hooks';
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import { Days, Hours, NextTasks } from '.';
 import { Cell } from './Cell';
-import useModalPosition from '../../../hooks/useModalPosition';
+import { useModalPosition } from '../../../hooks/useModalPosition';
+import CloseIcon from '@mui/icons-material/Close';
+import { EditableText } from '../..';
+import { DateRange } from '@mui/x-date-pickers-pro';
 
 const monthNames = [
   'Январь',
@@ -28,19 +31,87 @@ const daysArray = Object.entries(days);
 const DAYS_COUNT = daysArray.length;
 const HOURS_COUNT = 24;
 
+const PORTAL_WIDTH = 300;
+const PORTAL_HEIGHT = 200;
+const PortalCell = ({
+  children,
+  isOpen,
+  x,
+  y,
+  bgColor,
+  handleToggleModal,
+  ...props
+}: {
+  children: ReactNode;
+  isOpen: boolean;
+  bgColor: string;
+  x: number;
+  y: number;
+  handleToggleModal: (str: string) => void;
+}) => {
+  if (!isOpen) {
+    return;
+  }
+
+  const styled = {
+    position: 'absolute',
+    top: y,
+    left: x,
+    zIndex: 1000,
+    width: PORTAL_WIDTH,
+    height: PORTAL_HEIGHT,
+    borderRadius: 2,
+    bgcolor: lighten(bgColor, 0.2),
+    border: '3px solid white',
+    boxShadow: 24,
+    wordBreak: 'break-word',
+    p: 1,
+  };
+
+  return (
+    <Modal isOpen={isOpen} styled={styled}>
+      <Box display={'flex'} justifyContent={'space-between'} {...props}>
+        <Box>{children}</Box>
+        <Box
+          height={'100%'}
+          display={'flex'}
+          alignItems={'center'}
+          sx={{ cursor: 'pointer' }}
+          onClick={() => handleToggleModal('')}>
+          <CloseIcon fontSize={'large'} />
+        </Box>
+      </Box>
+    </Modal>
+  );
+};
+
+const statusTranslate = (date?: DateRange<Dayjs>) => {
+  if (!date) return 'В очереди';
+
+  const now = dayjs();
+  const start = dayjs(date[0]);
+  const end = dayjs(date[1]);
+
+  if (start.isBefore(now) && end.isAfter(now)) {
+    return 'В процессе';
+  }
+  if (end.isBefore(now)) {
+    return 'Не выполненные';
+  }
+  if (start.isAfter(now) || start.isSame(now, 'day')) {
+    return 'В очереди';
+  }
+
+  return 'В очереди';
+};
+
 export const TableCalendar = () => {
   const {
     functions: { handleMouseDown, handleMouseUp, handleMouseMove },
     state: { elements, selectedColIndex, isClick },
   } = useSelectElements();
-  const todos = useTodoStore((state) => state.todos);
-  const addTodo = useTodoStore((state) => state.addTodo);
+  const { addTodo, updateTodo, todos } = useTodoStore((state) => state);
 
-
-  const ref = useRef<HTMLElement | null>(null);
-  const modalPosition = useModalPosition(ref, 200, 200);
-
-  
   const [weekOffset, setWeekOffset] = useState(0);
   const handleSetWeekOffset = (step: -1 | 1) => {
     setWeekOffset(weekOffset + step);
@@ -70,9 +141,9 @@ export const TableCalendar = () => {
 
   const [newTask, setNewTask] = useState<Todo>({
     id: crypto.randomUUID(),
-    status: StatusTodoEnum.queue,
     date: [dayjs(), dayjs()],
     text: '',
+    note: '',
   });
   const [toggleModal, setToggleModal] = useState(false);
 
@@ -108,11 +179,26 @@ export const TableCalendar = () => {
     setToggleModal(false);
     setNewTask({
       id: crypto.randomUUID(),
-      status: StatusTodoEnum.queue,
       date: [dayjs(), dayjs()],
       text: '',
+      note: '',
     });
   };
+
+  const { ref, position } = useModalPosition(PORTAL_WIDTH, PORTAL_HEIGHT);
+  const [idModal, setIdModal] = useState<string | null>(null);
+
+  const handleToggleModal = (idTask: string) => {
+    if (idModal) {
+      setIdModal(null);
+      return;
+    }
+    setIdModal(idTask);
+  };
+
+  const updateTaskText = useCallback((id: string, text: string) => {
+    updateTodo(id, { text });
+  }, []);
 
   return (
     <Typography
@@ -131,11 +217,17 @@ export const TableCalendar = () => {
           label="Задача"
           variant="outlined"
         />
+        <TextField
+          onChange={(e) => setNewTask({ ...newTask, note: e.target.value })}
+          sx={{ mb: 2 }}
+          label="Примечание"
+          variant="outlined"
+        />
         <Button onClick={createNewTask}>Создать</Button>
       </Modal>
       <NextTasks
         component="div"
-        gridArea={'1 / 1 / 6 / 2'}
+        gridArea={'2 / 1 / 6 / 2'}
         pr={1}
         todos={todos}
         handleSetWeekOffset={handleSetWeekOffset}
@@ -168,19 +260,70 @@ export const TableCalendar = () => {
               const isSelected = selectedColIndex === indexCol && elements.includes(indexHour);
 
               return (
-                <Cell
-                  key={`${indexHour} + ${indexCol}`}
-                  datesForWeek={datesForWeek}
-                  task={findTask}
-                  status={status}
-                  isSelected={isSelected}
-                  nowTime={nowTime}
-                  height={100}
-                  width={141}
-                  onMouseDown={() => status === 'none' && handleMouseDown(indexHour, indexCol)}
-                  onMouseMove={() => status === 'none' && onMouseMove(indexHour)}
-                  onMouseUp={() => status === 'none' && mouseUp()}
-                />
+                <Box key={`${indexHour} + ${indexCol}`} position={'relative'}>
+                  <Cell
+                    height={100}
+                    width={141}
+                    color="black"
+                    textTransform={'capitalize'}
+                    borderRight={1}
+                    datesForWeek={datesForWeek}
+                    task={findTask}
+                    status={status}
+                    isSelected={isSelected}
+                    nowTime={nowTime}
+                    handleToggleModal={handleToggleModal}
+                    idModal={findTask?.id}
+                    onMouseDown={() => status === 'none' && handleMouseDown(indexHour, indexCol)}
+                    onMouseMove={() => status === 'none' && onMouseMove(indexHour)}
+                    onMouseUp={() => status === 'none' && mouseUp()}
+                    ref={ref}
+                  />
+                  <PortalCell
+                    bgColor={findTask?.color ?? 'white'}
+                    x={position.x}
+                    y={position.y}
+                    isOpen={idModal === findTask?.id && status === 'start'}
+                    handleToggleModal={handleToggleModal}>
+                    <Typography color={'black'} component={'div'}>
+                      <EditableText
+                        id={findTask?.id ?? ''}
+                        updateText={updateTaskText}
+                        color={'black'}
+                        component={'div'}
+                        fontSize={24}
+                        fontWeight={600}
+                        sx={{ cursor: 'pointer' }}
+                        textTransform={'capitalize'}
+                        mb={1}>
+                        {findTask?.text ?? ''}
+                      </EditableText>
+                    </Typography>
+                    <Typography
+                      border={'1px solid cyan'}
+                      borderRadius={4}
+                      mb={1}
+                      textAlign={'center'}
+                      width={'100%'}
+                      overflow={'hidden'}
+                      color={'black'}
+                      component={'div'}
+                      fontSize={16}
+                      fontWeight={500}
+                      textTransform={'capitalize'}>
+                      {statusTranslate(findTask?.date)}
+                    </Typography>
+                    <Typography
+                      color={'black'}
+                      component={'div'}
+                      fontSize={18}
+                      fontWeight={500}
+                      fontStyle={'italic'}
+                      textTransform={'capitalize'}>
+                      {findTask?.note}
+                    </Typography>
+                  </PortalCell>
+                </Box>
               );
             })}
           </Box>

@@ -1,9 +1,9 @@
-import { StatusTodoEnum, useTodoStore } from '../../../store';
+import { useTodoStore } from '../../../store';
 import { ButtonIcon, EditableText } from '../..';
 import { Box, Button, Checkbox, Grid } from '@mui/material';
 import { blueGrey } from '@mui/material/colors';
 import { Fragment, useCallback, useState } from 'react';
-import { PickerCalendar, StatusOption } from '.';
+import { PickerCalendar } from '.';
 import { DateRange } from '@mui/x-date-pickers-pro';
 import dayjs, { Dayjs } from 'dayjs';
 
@@ -17,7 +17,7 @@ export const PanelTodoList = () => {
       id: crypto.randomUUID(),
       text: '',
       date: [dayjs(), dayjs()],
-      status: StatusTodoEnum.queue,
+      note: '',
     });
   };
 
@@ -87,9 +87,7 @@ export const PanelTodoList = () => {
                     {todo.text}
                   </EditableText>
                 </Box>
-                <Box width={150}>
-                  <StatusOption id={todo.id} updateStore={updateTodo} status={todo.status} />
-                </Box>
+                <Box width={150}></Box>
                 <Box p={0} px={1}>
                   <PickerCalendar id={todo.id} updateStore={handleUpdateDate} date={todo.date} />
                 </Box>

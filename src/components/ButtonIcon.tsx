@@ -33,6 +33,7 @@ export const ButtonIcon = ({
   return (
     <Button
       sx={{
+        w: 25,
         color: cn({
           [red[600]]: appearance === 'danger',
           [orange[600]]: appearance === 'warning',

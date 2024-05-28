@@ -4,18 +4,12 @@ import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
-export enum StatusTodoEnum {
-  queue = 'queue',
-  inProgress = 'inProgress',
-  completed = 'completed',
-}
-
 export interface Todo {
   id: string;
   text: string;
   date: DateRange<Dayjs>;
-  status: StatusTodoEnum;
   color?: keyof typeof colors;
+  note: string;
 }
 
 type Actions = {
@@ -59,15 +53,15 @@ export const useTodoStore = create<State & Actions>()(
           id: '42a44fcb-48bc-471b-bb34-15b4351ab80d',
           text: 'Помыть посуду',
           date: [dayjs('2024-05-09').set('hour', 10), dayjs('2024-05-09').set('hour', 14)],
-          status: StatusTodoEnum.inProgress,
           color: getRandomColor(),
+          note: 'Очень важно',
         },
         {
           id: '42a44fcb-48bc-471b-bb34-15b4351ab81d',
           text: 'Помыть пол',
           date: [dayjs('2024-05-10').set('hour', 12), dayjs('2024-05-10').set('hour', 20)],
-          status: StatusTodoEnum.inProgress,
           color: getRandomColor(),
+          note: 'Очень важно',
         },
       ],
       addTodo: (newTodo) =>

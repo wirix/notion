@@ -1,6 +1,6 @@
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, lighten, darken } from '@mui/material';
 import dayjs, { Dayjs } from 'dayjs';
-import { ComponentProps, HTMLAttributes, forwardRef } from 'react';
+import { ComponentProps } from 'react';
 import { Todo } from '../../../store';
 import { truncateString } from '../../../utils';
 
@@ -10,24 +10,11 @@ interface SelectedElProps extends ComponentProps<typeof Box> {
   nowTime: Dayjs;
   isSelected: boolean;
   datesForWeek: { day: { index: number; name: string }; month: { index: number; name: string } }[];
+  idModal: string | undefined;
+  handleToggleModal: (idTask: string) => void;
 }
 
 export type CellWithTaskStatus = 'start' | 'end' | 'middle' | 'none';
-
-const Modal1 = forwardRef<HTMLElement, HTMLAttributes<HTMLElement>>(({ ...props }, ref) => {
-  return (
-    <Box
-      color={'white'}
-      width={200}
-      height={200}
-      position={'absolute'}
-      right={0}
-      top={0}
-      {...props}>
-      MODAL11111111111111111111111111111
-    </Box>
-  );
-});
 
 export const Cell = ({
   task,
@@ -35,18 +22,15 @@ export const Cell = ({
   status,
   datesForWeek,
   nowTime,
+  idModal,
+  handleToggleModal,
   ...props
 }: SelectedElProps) => {
   if (!task) {
     return (
       <Box
-        p={1}
-        bgcolor={isSelected ? 'lime' : 'grey'}
-        borderColor={'greywhite'}
-        color={'black'}
-        borderLeft={nowTime.day() === 1 ? 1 : 0}
-        borderRight={1}
-        borderTop={nowTime.format('HH') === '00' ? 1 : 0}
+        sx={{ '&:hover': { bgcolor: 'indigo' }, cursor: 'pointer' }}
+        bgcolor={isSelected ? 'indigo' : 'darkslateblue'}
         borderBottom={1}
         {...props}>
         &nbsp;
@@ -57,78 +41,81 @@ export const Cell = ({
   switch (status) {
     case 'start':
       return (
-        <Box
-          p={1}
-          color={'black'}
-          borderColor={'greywhite'}
-          bgcolor={task.color}
-          borderLeft={nowTime.day() === 1 ? 1 : 0}
-          borderTop={nowTime.format('HH') === '00' ? 1 : 0}
-          borderRight={1}
-          sx={{
-            borderTopLeftRadius: 8,
-            borderTopRightRadius: 8,
-            overflow: 'hidden',
-            wordBreak: 'break-all',
-          }}
-          {...props}>
-          <Typography component={'div'} color={'black'} fontSize={20} fontWeight={500}>
-            {truncateString(task.text, 20)}
-          </Typography>
-          <Typography component={'span'} color={'black'} fontSize={16} fontWeight={400}>
-            {dayjs(task.date[0]).hour().toLocaleString('ru-RU', { minimumIntegerDigits: 2 })}:
-            {dayjs(task.date[0]).minute().toLocaleString('ru-RU', { minimumIntegerDigits: 2 })}
-          </Typography>{' '}
-          -{' '}
-          <Typography component={'span'} color={'black'} fontSize={16} fontWeight={400}>
-            {dayjs(task.date[1]).hour().toLocaleString('ru-RU', { minimumIntegerDigits: 2 })}:
-            {dayjs(task.date[1]).minute().toLocaleString('ru-RU', { minimumIntegerDigits: 2 })}
-          </Typography>
+        <Box borderLeft={4} borderColor={lighten(task.color!, 0.3)} {...props}>
+          <Box
+            bgcolor={task.color}
+            width={'95%'}
+            height={'100%'}
+            pl={1}
+            sx={{
+              borderTopRightRadius: 8,
+              overflow: 'hidden',
+              wordBreak: 'break-all',
+              cursor: 'pointer',
+            }}
+            onClick={() => handleToggleModal(task.id)}>
+            <Typography component={'div'} color="black" fontSize={18} fontWeight={500}>
+              {truncateString(task.text, 28)}
+            </Typography>
+            <Typography component={'span'} color="black" fontSize={14} fontWeight={400}>
+              {dayjs(task.date[0]).hour().toLocaleString('ru-RU', { minimumIntegerDigits: 2 })}:
+              {dayjs(task.date[0]).minute().toLocaleString('ru-RU', { minimumIntegerDigits: 2 })}
+            </Typography>{' '}
+            -{' '}
+            <Typography component={'span'} color="black" fontSize={14} fontWeight={400}>
+              {dayjs(task.date[1]).hour().toLocaleString('ru-RU', { minimumIntegerDigits: 2 })}:
+              {dayjs(task.date[1]).minute().toLocaleString('ru-RU', { minimumIntegerDigits: 2 })}
+            </Typography>
+          </Box>
         </Box>
       );
     case 'end':
       return (
-        <Box
-          p={1}
-          bgcolor={task.color}
-          borderColor={'greywhite'}
-          color={'black'}
-          borderBottom={1}
-          borderLeft={nowTime.day() === 1 ? 1 : 0}
-          borderTop={nowTime.format('HH') === '00' ? 1 : 0}
-          borderRight={1}
-          sx={{
-            borderBottomLeftRadius: 8,
-            borderBottomRightRadius: 8,
-            overflow: 'hidden',
-          }}
-          {...props}></Box>
+        <Box borderLeft={4} borderColor={lighten(task.color!, 0.25)} borderBottom={1} {...props}>
+          <Box
+            bgcolor={task.color}
+            width={'95%'}
+            height={'100%'}
+            onClick={() => handleToggleModal(task.id)}
+            sx={{
+              borderBottomRightRadius: 8,
+              overflow: 'hidden',
+              position: 'relative',
+              cursor: 'pointer',
+              ':before': {
+                display: 'block',
+                content: '""',
+                position: 'absolute',
+                right: '10px',
+                bottom: '7px',
+                width: '7px',
+                height: '7px',
+                borderRadius: '50%',
+                backgroundColor: `${darken(task.color!, 0.25)}`,
+              },
+            }}></Box>
+        </Box>
       );
     case 'middle':
       return (
         <Box
-          p={1}
-          bgcolor={task.color}
-          color={'black'}
-          borderColor={'greywhite'}
-          borderLeft={nowTime.day() === 1 ? 1 : 0}
-          borderTop={nowTime.format('HH') === '00' ? 1 : 0}
-          borderRight={1}
-          key={task.id}
-          {...props}></Box>
+          borderLeft={4}
+          borderColor={lighten(task.color!, 0.25)}
+          sx={{ cursor: 'pointer' }}
+          onClick={() => handleToggleModal(task.id)}
+          {...props}>
+          <Box bgcolor={task.color} width={'95%'} height={'100%'}></Box>
+        </Box>
       );
     case 'none':
       return (
         <Box
+          onClick={() => handleToggleModal(task.id)}
           p={1}
           borderColor={'greywhite'}
-          color={'black'}
-          borderLeft={nowTime.day() === 1 ? 1 : 0}
-          borderRight={1}
-          borderTop={nowTime.format('HH') === '00' ? 1 : 0}
           borderBottom={1}
           sx={{
-            cursor: 'row-resize',
+            cursor: 'pointer',
           }}
           {...props}>
           &nbsp; пусто

@@ -7,7 +7,7 @@ import { Box, ThemeProvider, useTheme } from '@mui/material';
 const ColorModeContext = createContext({ toggleColorMode: () => {} });
 
 export const App = () => {
-  const [isOpenCalendar, setIsOpenCalendar] = useState(true);
+  const [isOpenCalendar, setIsOpenCalendar] = useState(false);
 
   const toogleCalendar = useCallback(() => {
     setIsOpenCalendar((prev) => !prev);
